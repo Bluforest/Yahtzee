@@ -8,6 +8,21 @@ def rollDie(die, freeze):
         if not freeze[i]:
             die[i] = random.randint(1, 6)
 
+def displayVictor(*scores):
+    max_score = max(scores)
+    winning_players = []
+
+    for i, score in enumerate(scores):
+        if score == max_score:
+            winning_players.append(i)
+    
+    if len(winning_players) > 1:
+        print(f"TIE BETWEEN PLAYERS {winning_players[0]+1} AND", end="")
+        for player in winning_players.pop(0):
+            print(f"AND {player+1}")
+    else:
+        print(f"PLAYER {winning_players[0]+1} WINS!")
+
 die_faces = [{
    0: "---------",
    1: "|       |",
@@ -321,6 +336,11 @@ class ScoreCard:
 
         self.yahtzee_bonus = 0        # Score: 100 per Yahtzee achieved during the game | Requirement: None
 
+        self.total = -1                # The total score. This will be calculated at the end of the game. Placeholder 0
+    
+    def calcTotal(self):
+        self.total = self.aces + self.twos + self.threes + self.fours + self.fives + self.sixes + self.bonus + self.three_kind + self.four_kind + self.full_house + self.sm_straight + self.lg_straight + self.yahtzee + self.chance
+
     def recordBonus(self):
         if not self.aces == "BLANK" and not self.twos == "BLANK" and not self.threes == "BLANK" and not self.fours == "BLANK" and not self.fives == "BLANK" and not self.sixes == "BLANK":
             if self.aces + self.twos + self.threes + self.fours + self.fives + self.sixes >= 63:
@@ -572,6 +592,16 @@ class ScoreCard:
 if __name__ == "__main__":
     player_scores = [ScoreCard(), ScoreCard(), ScoreCard(), ScoreCard()]
 
+    # TODO
+    # Make a while loop so that any player can ask for their own scorecard and have it displayed.
+    # Keywords to always listen for:
+    #   HELP   - Explain the controls
+    #   RULES  - Explain the rules of the game
+    #   SCORE  - Explain all the score categories
+    #   EXIT   - Ends the program immediately (I don't even know if that's possible)
+    # Possible other keywords:
+    #   SCORECARD [NUMBER] - Show the score card for player [number]
+
     # Getting the number of players
     print("\nWelcome to a legally-distinct Yahtzee Python program!\nPlease enter the number of players (1-4).\n")
     response = input()
@@ -629,13 +659,9 @@ if __name__ == "__main__":
         # TODO make a new scorecard that displays the below instructions but, you know, up above.
         input(f"IGNORE THE INSTRUCTIONS ABOVE. IT'S THE END OF YOUR TURN!\nPress ENTER to continue to PLAYER {(turn+1) % n_players + 1}'S turn:\n")
 
-    # TODO: Calculate the total scores and then display the winner.
-    # TODO: Make a while loop so that any player can ask for their own scorecard and have it displayed.
-    #       Maybe make it such that if someone types "EXIT" the program finishes.
-
     for player in range(n_players):
-        total_score = 0 # TODO Add a function to scorecard to calculate total score.
+        player_scores[player].calcTotal()
+        total_score = player_scores[player].total
         print(f"PLAYER {player+1}'S TOTAL SCORE: {total_score}")
-        print("Yeah okay so I haven't implemented the part where the total score is calculated yet. Just add it all up on your own for now.")
 
-    print("I mean yeah that's basically the entire game so far. I hope you had fun!")
+    displayVictor(player_scores[0].total, player_scores[1].total, player_scores[2].total, player_scores[3].total)
