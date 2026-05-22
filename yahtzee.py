@@ -1,14 +1,23 @@
 import random
 
 def rollDie(die, freeze):
-    """Randomizes the value of die as long as the corresponding freeze is False.
-    die is a list of 5 integer values, freeze is a list of 5 boolean values."""
+    """Randomizes the value of die as long as the corresponding freeze value is false.
+
+    Args:
+        die (list): A list of 5 integer values representing dice faces.
+        freeze (list): A list of 5 boolean values representing whether or not the die in the corresponding index should be rerolled. True means it should, False means it shouldn't.
+    """
 
     for i in range(5):
         if not freeze[i]:
             die[i] = random.randint(1, 6)
 
+# TODO Display all participating players' score cards (only the 'recorded score' section)
 def displayVictor(*scores):
+    """Finds and prints the winning player, or determines if there's a tie between two players.
+    Args:
+        scores: Can be either a list of players' scores or all of them in a tuple within the argument field.
+    """
     max_score = max(scores)
     winning_players = []
 
@@ -67,8 +76,8 @@ die_faces = [{
 }]
 
 def printDie(die):
-    """Prints ASCII art of the five dice specified in a horizontal row.
-    NOTE This function is no longer being used in the yahtzee.py program.
+    """Prints ASCII art of the five dice specified in a horizontal row. Does not return any values.
+    This function is not used in the main game, only in the menu to demonstrate hands.
 
     Args:
         die (list): A list of five integer values, each between 1 and 6 (inclusive).
@@ -79,6 +88,7 @@ def printDie(die):
             print(die_faces[face-1][row], end="   ")
         print()
 
+# TODO Make the single-digit score displays show up as 0X
 def printGameDisplay(player, round, rerolls, die, scorecard, round_score):
     """Displays the player's roll, their score card, and other pertinent information through the use of multiple print() calls.
 
@@ -96,7 +106,12 @@ def printGameDisplay(player, round, rerolls, die, scorecard, round_score):
     print("‾"*70)
     print("_"*70)
     print("|" + " "*15 + "|" + f"{'SCORECARD':^52}|")
-    print(f"|{'THIS ROLL':^15}|" + "‾"*52 + "|")
+
+    if rerolls == 0:
+        print(f"|{'FINAL HAND':^15}|" + "‾"*52 + "|")
+    else:
+        print(f"|{'THIS ROLL':^15}|" + "‾"*52 + "|")
+    
     print("|" + " "*15 + f"|{'CATEGORY':^19}|{'RECORDED SCORE':^16}|{'ROUND SCORE':^15}|")
     print(f"|{die_faces[die[0]-1][0]:^15}|" + "‾"*52 + "|")
 
@@ -204,7 +219,7 @@ def handChecker(die):
         die (list): A list of five integer values, each between 1 and 6 (inclusive).
     
     Returns:
-        dictionary: A dictionary of boolean values with keys "three kind", "four kind", "yahtzee", "full house", "sm straight", "lg straight".
+        checks (dictionary): A dictionary of boolean values with keys "three kind", "four kind", "yahtzee", "full house", "sm straight", "lg straight".
     """
 
     counts = [0, 0, 0, 0, 0, 0]
@@ -256,6 +271,9 @@ def calcHandScores(die):
     
     Args:
         die (list): A list of five integer values, each between 1 and 6 (inclusive).
+    
+    Returns:
+        scores (dictionary): A dictionary of the given dice's Yahtzee scores, including single values and special hands. Keys: "aces", "twos", "threes", "fours", "fives", "sixes", "three kind", "four kind", "full house", "sm straight", "lg straight", "yahtzee", "chance".
     """
 
     # Initializes a dictionary for all the scores. Default values are always 0.
@@ -336,7 +354,10 @@ class ScoreCard:
 
         self.yahtzee_bonus = 0        # Score: 100 per Yahtzee achieved during the game | Requirement: None
 
-        self.total = -1                # The total score. This will be calculated at the end of the game. Placeholder 0
+        self.digits_total = -1         # Total of all scores in categories aces-sixes. Placeholder -1
+        self.top_total = -1            # Total of all scores in categories aces-sixes and the bonus if applicable. Placeholder -1
+        self.bottom_total = -1         # Total of all scores in all categories after bonus, including yahtzee bonus. Placeholder -1
+        self.total = -1                # The total score. This will be calculated at the end of the game. Placeholder -1
     
     def calcTotal(self):
         self.total = self.aces + self.twos + self.threes + self.fours + self.fives + self.sixes + self.bonus + self.three_kind + self.four_kind + self.full_house + self.sm_straight + self.lg_straight + self.yahtzee + self.chance
@@ -588,19 +609,9 @@ class ScoreCard:
         "CHANCE": recordChance
     }
 
-# BELOW IS THE MAIN PROGRAM. IT'S UNFINISHED. IT'S ACTUALLY KIND OF BAD. MAYBE REWRITE IT
+# BELOW IS THE MAIN PROGRAM
 if __name__ == "__main__":
     player_scores = [ScoreCard(), ScoreCard(), ScoreCard(), ScoreCard()]
-
-    # TODO
-    # Make a while loop so that any player can ask for their own scorecard and have it displayed.
-    # Keywords to always listen for:
-    #   HELP   - Explain the controls
-    #   RULES  - Explain the rules of the game
-    #   SCORE  - Explain all the score categories
-    #   EXIT   - Ends the program immediately (I don't even know if that's possible)
-    # Possible other keywords:
-    #   SCORECARD [NUMBER] - Show the score card for player [number]
 
     # Getting the number of players
     print("\nWelcome to a legally-distinct Yahtzee Python program!\nPlease enter the number of players (1-4).\n")
@@ -611,8 +622,63 @@ if __name__ == "__main__":
         response = input()
 
     n_players = int(response)
-    print(f"\nOkay, so we're playing with {n_players} player(s), then? Great!")
-    input("Player 1, please get ready. Press ENTER to begin the game!\n")
+
+    # POSSIBLE MENUS:
+    # MAIN              - Can choose any starting menu or begin the game.
+    # SETTINGS          - Can change settings.
+    # CONTROLS          - Basic explanation of the controls.
+    # RULES             - Basic explanation of the rules of yahtzee.
+    # EXAMPLE SCORES    - Basic explanation of the special dice hands.
+
+    # Game state and settings
+    in_menu = True
+    menu = "MAIN"
+    # TODO Add more booleans here to represent settings down below
+    # TODO And then obviously implement those settings into the game itself.
+
+    # Main Menu
+    while in_menu:
+        # Select which menu you want or start the game
+        if menu == "MAIN":
+            # TODO Write something here that explains the menus
+            print("THIS PART HASN'T BEEN WRITTEN YET")
+            response = input()
+
+            if response.strip().lower() == "settings":
+                menu = "SETTINGS"
+            elif response.strip().lower() == "help":
+                menu = "CONTROLS"
+            elif response.strip().lower() == "rules":
+                menu = "RULES"
+            elif response.strip().lower() == "score":
+                menu = "EXAMPLE SCORES"
+            elif response.strip().lower() == "start":
+                in_menu = False
+            else:
+                # TODO Write something that basically says: Hey you didn't do a correct input
+                pass
+        
+        # Settings Menu
+        if menu == "SETTINGS":
+            # TODO Write the game settings.
+            # Possible settings: Choose which die to reroll vs keep, change the number of players (put the choosing player number code above into a function)
+            # Probably add more settings too, but that's later
+            pass
+
+        # Controls Explanation
+        if menu == "CONTROLS":
+            # TODO Write up an explanation of the controls.
+            pass
+
+        # Rules Explanation
+        if menu == "RULES":
+            # TODO Write up an explanation of the rules.
+            pass
+
+        if menu == "EXAMPLE SCORES":
+            # TODO Create a menu that allows the player to choose which score they want explained, or exit. Maybe use the printDie function I'm not using.
+            pass
+
 
     # Main program. Each player gets 13 turns.
     for turn in range(n_players*13):
@@ -627,14 +693,23 @@ if __name__ == "__main__":
         for i in range(2):
             round_scores = calcHandScores(die_values)
             printGameDisplay(current_player, (turn // n_players) + 1, 2-i, die_values, player_scores[current_player], round_scores)
-            freeze_values = [False, False, False, False, False]
 
-            response = input()
-            if response.upper() == "KEEP":
-                break
+            valid_input = False
+            while not valid_input:
+                try:
+                    response = input()
+                    if response.strip().upper() == "KEEP":
+                        valid_input = True
+                        break
+                    
+                    freeze_values = [False, False, False, False, False]
+                    for i in response.split():
+                        freeze_values[int(i)-1] = True
+                except:
+                    # TODO Inform them to do the thing again.
+                    print("Please enter numbers between 1 and 5, separated by spaces.")
+                    pass
             
-            for i in response.split():
-                freeze_values[int(i)-1] = True
             rollDie(die_values, freeze_values)
             
             
@@ -652,13 +727,14 @@ if __name__ == "__main__":
             else:
                 print("Please enter a valid score category.\n")
         
-        player_scores[current_player].commands_dict[response](player_scores[current_player], round_scores)
+        player_scores[current_player].commands_dict[response.upper()](player_scores[current_player], round_scores)
 
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores)
         
         # TODO make a new scorecard that displays the below instructions but, you know, up above.
         input(f"IGNORE THE INSTRUCTIONS ABOVE. IT'S THE END OF YOUR TURN!\nPress ENTER to continue to PLAYER {(turn+1) % n_players + 1}'S turn:\n")
 
+    # TODO Implement the final scorecard feature that I'm working on in testing_yahtzee
     for player in range(n_players):
         player_scores[player].calcTotal()
         total_score = player_scores[player].total
