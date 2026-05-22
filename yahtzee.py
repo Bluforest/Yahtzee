@@ -12,7 +12,6 @@ def rollDie(die, freeze):
         if not freeze[i]:
             die[i] = random.randint(1, 6)
 
-# TODO Display all participating players' score cards (only the 'recorded score' section)
 def displayVictor(*scores):
     """Finds and prints the winning player, or determines if there's a tie between two players.
     Args:
@@ -26,9 +25,8 @@ def displayVictor(*scores):
             winning_players.append(i)
     
     if len(winning_players) > 1:
-        print(f"TIE BETWEEN PLAYERS {winning_players[0]+1} AND", end="")
-        for player in winning_players.pop(0):
-            print(f"AND {player+1}")
+        tied_players = [str(player + 1) for player in winning_players]
+        print(f"TIE BETWEEN PLAYERS {', '.join(tied_players)}!")
     else:
         print(f"PLAYER {winning_players[0]+1} WINS!")
 
@@ -633,16 +631,18 @@ if __name__ == "__main__":
     # Game state and settings
     in_menu = True
     menu = "MAIN"
-    # TODO Add more booleans here to represent settings down below
-    # TODO And then obviously implement those settings into the game itself.
 
     # Main Menu
     while in_menu:
         # Select which menu you want or start the game
         if menu == "MAIN":
-            # TODO Write something here that explains the menus
-            print("THIS PART HASN'T BEEN WRITTEN YET")
-            response = input()
+            print("\nMAIN MENU")
+            print("Type START to begin the game.")
+            print("Type HELP to learn the controls.")
+            print("Type RULES to learn how Yahtzee works.")
+            print("Type SCORE to see scoring examples.")
+            print("Type SETTINGS to view current settings.\n")
+            response = input("Enter your choice: ")
 
             if response.strip().lower() == "settings":
                 menu = "SETTINGS"
@@ -654,30 +654,47 @@ if __name__ == "__main__":
                 menu = "EXAMPLE SCORES"
             elif response.strip().lower() == "start":
                 in_menu = False
-            else:
-                # TODO Write something that basically says: Hey you didn't do a correct input
-                pass
+           else:
+                print("Invalid input. Please type START, HELP, RULES, SCORE, or SETTINGS.\n")
         
         # Settings Menu
         if menu == "SETTINGS":
-            # TODO Write the game settings.
-            # Possible settings: Choose which die to reroll vs keep, change the number of players (put the choosing player number code above into a function)
-            # Probably add more settings too, but that's later
-            pass
+            print("\nSETTINGS")
+            print(f"Number of players: {n_players}")
+            print("Players choose which dice to keep before rerolling.")
+            print("Type BACK to return to the main menu.\n")
+            input("Press ENTER to return: ")
+            menu = "MAIN"
 
         # Controls Explanation
         if menu == "CONTROLS":
-            # TODO Write up an explanation of the controls.
-            pass
+            print("\nCONTROLS")
+            print("After each roll, type the dice numbers you want to KEEP.")
+            print("Example: typing 1 3 5 keeps dice #1, #3, and #5.")
+            print("Type KEEP if you do not want to reroll any dice.")
+            print("After the final roll, choose a score category.")
+            input("\nPress ENTER to return: ")
+            menu = "MAIN"
 
         # Rules Explanation
         if menu == "RULES":
-            # TODO Write up an explanation of the rules.
-            pass
+            print("\nRULES")
+            print("Each player gets 13 turns.")
+            print("Each turn allows up to 3 total rolls.")
+            print("Each score category can only be used once.")
+            print("The player with the highest final score wins.")
+            input("\nPress ENTER to return: ")
+            menu = "MAIN"
 
         if menu == "EXAMPLE SCORES":
-            # TODO Create a menu that allows the player to choose which score they want explained, or exit. Maybe use the printDie function I'm not using.
-            pass
+            print("\nEXAMPLE SCORES")
+            print("Full House: three of one number and two of another = 25 points.")
+            print("Small Straight: four numbers in a row = 30 points.")
+            print("Large Straight: five numbers in a row = 40 points.")
+            print("Yahtzee: five matching dice = 50 points.")
+            print("Chance: total of all dice.")
+            input("\nPress ENTER to return: ")
+            menu = "MAIN"
 
 
     # Main program. Each player gets 13 turns.
@@ -705,14 +722,14 @@ if __name__ == "__main__":
                         break
                     
                     freeze_values = [False, False, False, False, False]
-                    for i in response.split():
-                        freeze_values[int(i)-1] = True
-                    
+                    for die_number in response.split():
+                        die_index = int(die_number) - 1
+                        if die_index < 0 or die_index > 4:
+                            raise ValueError
+                        freeze_values[die_index] = True
                     valid_input = True
-                except:
-                    # TODO Make the message slightly more proefessional.
-                    print("Please enter \"KEEP\" or a list of numbers between 1 and 5, separated by spaces.")
-                    pass
+                except ValueError:
+                    print("Invalid input. Please enter \"KEEP\" or dice numbers between 1 and 5, separated by spaces.")
             
             if end_rerolls:
                 break
@@ -725,26 +742,30 @@ if __name__ == "__main__":
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores)
         
         while True:
-            response = input()
-            if response.upper() in player_scores[current_player].commands_dict:
-                if player_scores[current_player].commands_dict[response.upper()](player_scores[current_player], round_scores) == -1:
-                    print("You may only record a score for each category once. Your may not change previous score assignments.\n")
+            response = input("Choose a score category: ")
+            category = response.strip().upper()
+            
+            if category in player_scores[current_player].commands_dict:
+                result = player_scores[current_player].commands_dict[category](player_scores[current_player], round_scores)
+
+                if result == -1:
+                    print("You may only record a score for each category once. Please choose another category.\n")
                 else:
                     break
             else:
                 print("Please enter a valid score category.\n")
-        
-        player_scores[current_player].commands_dict[response.upper()](player_scores[current_player], round_scores)
-
+                
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores)
         
-        # TODO make a new scorecard that displays the below instructions but, you know, up above.
-        input(f"IGNORE THE INSTRUCTIONS ABOVE. IT'S THE END OF YOUR TURN!\nPress ENTER to continue to PLAYER {(turn+1) % n_players + 1}'S turn:\n")
-
-    # TODO Implement the final scorecard feature that I'm working on in testing_yahtzee
+        input(f"End of turn. Press ENTER to continue to PLAYER {(turn + 1) % n_players + 1}'S turn:\n")
+    
+    print("\nFINAL SCOREBOARD")
+    print("----------------")
+    final_scores = []
     for player in range(n_players):
         player_scores[player].calcTotal()
         total_score = player_scores[player].total
-        print(f"PLAYER {player+1}'S TOTAL SCORE: {total_score}")
-
-    displayVictor(player_scores[0].total, player_scores[1].total, player_scores[2].total, player_scores[3].total)
+        final_scores.append(total_score)
+        print(f"PLAYER {player + 1}: {total_score} POINTS")
+    print("----------------")
+    displayVictor(*final_scores)
