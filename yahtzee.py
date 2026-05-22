@@ -689,7 +689,8 @@ if __name__ == "__main__":
         print("_"*57, end="\n\n")
 
         rollDie(die_values, freeze_values)
-
+        
+        end_rerolls = False
         for i in range(2):
             round_scores = calcHandScores(die_values)
             printGameDisplay(current_player, (turn // n_players) + 1, 2-i, die_values, player_scores[current_player], round_scores)
@@ -700,15 +701,21 @@ if __name__ == "__main__":
                     response = input()
                     if response.strip().upper() == "KEEP":
                         valid_input = True
+                        end_rerolls = True
                         break
                     
                     freeze_values = [False, False, False, False, False]
                     for i in response.split():
                         freeze_values[int(i)-1] = True
+                    
+                    valid_input = True
                 except:
-                    # TODO Inform them to do the thing again.
-                    print("Please enter numbers between 1 and 5, separated by spaces.")
+                    # TODO Make the message slightly more proefessional.
+                    print("Please enter \"KEEP\" or a list of numbers between 1 and 5, separated by spaces.")
                     pass
+            
+            if end_rerolls:
+                break
             
             rollDie(die_values, freeze_values)
             
