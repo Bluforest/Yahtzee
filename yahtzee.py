@@ -12,6 +12,23 @@ def rollDie(die, freeze):
         if not freeze[i]:
             die[i] = random.randint(1, 6)
 
+def formatScore(num, been_recorded = False):
+    """Formats the argument to contain leading zeroes if it's a 1 digit number, be two spaces ("  ") if it's "BLANK", and leave it unchanged otherwise.
+    
+    Args:
+        num (string): The number to be formatted.
+    Returns:
+        num (string): The formatted number with a leading zero if necessary or two spaces if blank.
+        been_recorded (boolean): True if the given score category has been recorded, false otherwise."""
+    
+    if been_recorded or num == "BLANK" or num == -1:
+        return "  "
+    elif int(num) // 10 == 0:
+        return f"{int(num):02d}"
+    else:
+        return str(num)
+
+# TODO Display all participating players' score cards (only the 'recorded score' section)
 def displayVictor(*scores):
     """Finds and prints the winning player, or determines if there's a tie between two players.
     Args:
@@ -86,8 +103,7 @@ def printDie(die):
             print(die_faces[face-1][row], end="   ")
         print()
 
-# TODO Make the single-digit score displays show up as 0X
-def printGameDisplay(player, round, rerolls, die, scorecard, round_score):
+def printGameDisplay(player, round, rerolls, die, scorecard, round_score, results=False):
     """Displays the player's roll, their score card, and other pertinent information through the use of multiple print() calls.
 
     Args:
@@ -95,8 +111,9 @@ def printGameDisplay(player, round, rerolls, die, scorecard, round_score):
         round (int): The round number, can be obtained through turn // n_players
         rerolls (int): The number of rerolls left for the player's turn. Find it. Somehow.
         die (list): A list of 5 integers representing the player's dice rolls.
-        scorecard(object): The current player's scorecard object.
-        round_score(dictionary): Parse in the result of calcHandScores() on the player's current hand.
+        scorecard (object): The current player's scorecard object.
+        round_score (dictionary): Parse in the result of calcHandScores() on the player's current hand.
+        reuslts (boolean): Decides on which set of instructions to give the player in the bottom-left corner of the box.
     """
 
     print("_"*70)
@@ -113,87 +130,40 @@ def printGameDisplay(player, round, rerolls, die, scorecard, round_score):
     print("|" + " "*15 + f"|{'CATEGORY':^19}|{'RECORDED SCORE':^16}|{'ROUND SCORE':^15}|")
     print(f"|{die_faces[die[0]-1][0]:^15}|" + "‾"*52 + "|")
 
-    if scorecard.aces == "BLANK":
-        print(f"|{die_faces[die[0]-1][1]:^15}|" + f" {'[1]':<5}{'ACES':<13}|" + " "*16 + "|" + f"{round_score['aces']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[0]-1][1]:^15}|" + f" {'[1]':<5}{'ACES':<13}|" + f"{scorecard.aces:^16}" + "|" + " "*15 + "|")
-    
-    if scorecard.twos == "BLANK":
-        print(f"|{die_faces[die[0]-1][2]:^15}|" + f" {'[2]':<5}{'TWOS':<13}|" + " "*16 + "|" + f"{round_score['twos']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[0]-1][2]:^15}|" + f" {'[2]':<5}{'TWOS':<13}|" + f"{scorecard.twos:^16}" + "|" + " "*15 + "|")
-    
-    if scorecard.threes == "BLANK":
-        print(f"|{die_faces[die[0]-1][3]:^15}|" + f" {'[3]':<5}{'THREES':<13}|" + " "*16 + "|" + f"{round_score['threes']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[0]-1][3]:^15}|" + f" {'[3]':<5}{'THREES':<13}|" + f"{scorecard.threes:^16}" + "|" + " "*15 + "|")
-
-    if scorecard.fours == "BLANK":
-        print(f"|{die_faces[die[0]-1][4]:^15}|" + f" {'[4]':<5}{'FOURS':<13}|" + " "*16 + "|" + f"{round_score['fours']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[0]-1][4]:^15}|" + f" {'[4]':<5}{'FOURS':<13}|" + f"{scorecard.fours:^16}" + "|" + " "*15 + "|")
-    
-    if scorecard.fives == "BLANK":
-        print(f"|{die_faces[die[1]-1][0]:^15}|" + f" {'[5]':<5}{'FIVES':<13}|" + " "*16 + "|" + f"{round_score['fives']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[1]-1][0]:^15}|" + f" {'[5]':<5}{'FIVES':<13}|" + f"{scorecard.fives:^16}" + "|" + " "*15 + "|")
-
-    if scorecard.sixes == "BLANK":
-        print(f"|{die_faces[die[1]-1][1]:^15}|" + f" {'[6]':<5}{'SIXES':<13}|" + " "*16 + "|" + f"{round_score['sixes']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[1]-1][1]:^15}|" + f" {'[6]':<5}{'SIXES':<13}|" + f"{scorecard.sixes:^16}" + "|" + " "*15 + "|")
+    print(f"|{die_faces[die[0]-1][1]:^15}|" + f" {'[1]':<5}{'ACES':<13}|" + f"{formatScore(scorecard.aces):^16}" + "|" + f"{formatScore(round_score['aces'], scorecard.aces != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[0]-1][2]:^15}|" + f" {'[2]':<5}{'TWOS':<13}|" + f"{formatScore(scorecard.twos):^16}" + "|" + f"{formatScore(round_score['twos'], scorecard.twos != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[0]-1][3]:^15}|" + f" {'[3]':<5}{'THREES':<13}|" + f"{formatScore(scorecard.threes):^16}" + "|" + f"{formatScore(round_score['threes'], scorecard.threes != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[0]-1][4]:^15}|" + f" {'[4]':<5}{'FOURS':<13}|" + f"{formatScore(scorecard.fours):^16}" + "|" + f"{formatScore(round_score['fours'], scorecard.fours != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[1]-1][0]:^15}|" + f" {'[5]':<5}{'FIVES':<13}|" + f"{formatScore(scorecard.fives):^16}" + "|" + f"{formatScore(round_score['fives'], scorecard.fives != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[1]-1][1]:^15}|" + f" {'[6]':<5}{'SIXES':<13}|" + f"{formatScore(scorecard.sixes):^16}" + "|" + f"{formatScore(round_score['sixes'], scorecard.sixes != "BLANK"):^15}" + "|")
 
     print(f"|{die_faces[die[1]-1][2]:^15}|" + "-"*52 + "|")
 
-    if scorecard.bonus == "BLANK":
-        print(f"|{die_faces[die[1]-1][3]:^15}|      BONUS        ", " "*16, " "*15, "", sep="|")
-    else:
-        print(f"|{die_faces[die[1]-1][3]:^15}|      BONUS        ", f"{scorecard.bonus:^16}", " "*15, "", sep="|")
+    print(f"|{die_faces[die[1]-1][3]:^15}|      BONUS        ", f"{formatScore(scorecard.bonus):^16}", " "*15, "", sep="|")
 
     print(f"|{die_faces[die[1]-1][4]:^15}|" + "-"*52 + "|")
 
-    if scorecard.three_kind == "BLANK":
-        print(f"|{die_faces[die[2]-1][0]:^15}|" + f" {'[7]':<5}{'3 OF A KIND':<13}|" + " "*16 + "|" + f"{round_score['three kind']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[2]-1][0]:^15}|" + f" {'[7]':<5}{'3 OF A KIND':<13}|" + f"{scorecard.three_kind:^16}" + "|" + " "*15 + "|")
-    
-    if scorecard.four_kind == "BLANK":
-        print(f"|{die_faces[die[2]-1][1]:^15}|" + f" {'[8]':<5}{'4 OF A KIND':<13}|" + " "*16 + "|" + f"{round_score['four kind']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[2]-1][1]:^15}|" + f" {'[8]':<5}{'4 OF A KIND':<13}|" + f"{scorecard.four_kind:^16}" + "|" + " "*15 + "|")
-
-    if scorecard.full_house == "BLANK":
-        print(f"|{die_faces[die[2]-1][2]:^15}|" + f" {'[9]':<5}{'FULL HOUSE':<13}|" + " "*16 + "|" + f"{round_score['full house']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[2]-1][2]:^15}|" + f" {'[9]':<5}{'FULL HOUSE':<13}|" + f"{scorecard.full_house:^16}" + "|" + " "*15 + "|")
-    
-    if scorecard.sm_straight == "BLANK":
-        print(f"|{die_faces[die[2]-1][3]:^15}|" + f" {'[10]':<5}{'SM. STRAIGHT':<13}|" + " "*16 + "|" + f"{round_score['sm straight']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[2]-1][3]:^15}|" + f" {'[10]':<5}{'SM. STRAIGHT':<13}|" + f"{scorecard.sm_straight:^16}" + "|" + " "*15 + "|")
-    
-    if scorecard.lg_straight == "BLANK":
-        print(f"|{die_faces[die[2]-1][4]:^15}|" + f" {'[11]':<5}{'LG. STRAIGHT':<13}|" + " "*16 + "|" + f"{round_score['lg straight']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[2]-1][4]:^15}|" + f" {'[11]':<5}{'LG. STRAIGHT':<13}|" + f"{scorecard.lg_straight:^16}" + "|" + " "*15 + "|")
-
-    if scorecard.yahtzee == "BLANK":
-        print(f"|{die_faces[die[3]-1][0]:^15}|" + f" {'[12]':<5}{'YAHTZEE':<13}|" + " "*16 + "|" + f"{round_score['yahtzee']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[3]-1][0]:^15}|" + f" {'[12]':<5}{'YAHTZEE':<13}|" + f"{scorecard.yahtzee:^16}" + "|" + " "*15 + "|")
-    
-    if scorecard.chance == "BLANK":
-        print(f"|{die_faces[die[3]-1][1]:^15}|" + f" {'[13]':<5}{'CHANCE':<13}|" + " "*16 + "|" + f"{round_score['chance']:^15}" + "|")
-    else:
-        print(f"|{die_faces[die[3]-1][1]:^15}|" + f" {'[13]':<5}{'CHANCE':<13}|" + f"{scorecard.chance:^16}" + "|" + " "*15 + "|")
+    print(f"|{die_faces[die[2]-1][0]:^15}|" + f" {'[8]':<5}{'4 OF A KIND':<13}|" + f"{formatScore(scorecard.four_kind):^16}" + "|" + f"{formatScore(round_score['four kind'], scorecard.four_kind != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[2]-1][1]:^15}|" + f" {'[7]':<5}{'3 OF A KIND':<13}|" + f"{formatScore(scorecard.three_kind):^16}" + "|" + f"{formatScore(round_score['three kind'], scorecard.three_kind != "BLANK"):^15}" + "|")    
+    print(f"|{die_faces[die[2]-1][2]:^15}|" + f" {'[9]':<5}{'FULL HOUSE':<13}|" + f"{formatScore(scorecard.full_house):^16}" + "|" + f"{formatScore(round_score['full house'], scorecard.full_house != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[2]-1][3]:^15}|" + f" {'[10]':<5}{'SM. STRAIGHT':<13}|" + f"{formatScore(scorecard.sm_straight):^16}" + "|" + f"{formatScore(round_score['sm straight'], scorecard.sm_straight != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[2]-1][4]:^15}|" + f" {'[11]':<5}{'LG. STRAIGHT':<13}|" + f"{formatScore(scorecard.lg_straight):^16}" + "|" + f"{formatScore(round_score['lg straight'], scorecard.lg_straight != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[3]-1][0]:^15}|" + f" {'[12]':<5}{'YAHTZEE':<13}|" + f"{formatScore(scorecard.yahtzee):^16}" + "|" + f"{formatScore(round_score['yahtzee'], scorecard.yahtzee != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[3]-1][1]:^15}|" + f" {'[13]':<5}{'CHANCE':<13}|" + f"{formatScore(scorecard.chance):^16}" + "|" + f"{formatScore(round_score['chance'], scorecard.chance != "BLANK"):^15}" + "|")
     
     print(f"|{die_faces[die[3]-1][2]:^15}|" + "-"*52 + "|")
 
-    print(f"|{die_faces[die[3]-1][3]:^15}|" + "   YAHTZEE BONUS   |" + f"{scorecard.yahtzee_bonus:^16}" + "|" + " "*15 + "|")
+    print(f"|{die_faces[die[3]-1][3]:^15}|" + "   YAHTZEE BONUS   |" + f"{formatScore(scorecard.yahtzee_bonus):^16}" + "|" + " "*15 + "|")
 
     print(f"|{die_faces[die[3]-1][4]:^15}|" + "‾"*52 + "|")
 
-    if rerolls == 0:
+    if results:
+        print(f"|{die_faces[die[4]-1][0]:^15}|" + " "*52 + "|")
+        print(f"|{die_faces[die[4]-1][1]:^15}|" + " "*52 + "|")
+        print(f"|{die_faces[die[4]-1][2]:^15}|" + f"{'Press ENTER to continue the game.':^52}" + "|")
+        print(f"|{die_faces[die[4]-1][3]:^15}|" + " "*52 + "|")
+        print(f"|{die_faces[die[4]-1][4]:^15}|" + " "*52 + "|")
+    elif rerolls == 0:
         print(f"|{die_faces[die[4]-1][0]:^15}|   * Choose which score category you wish to        |")
         print(f"|{die_faces[die[4]-1][1]:^15}|     assign this hand to.                           |")
         print(f"|{die_faces[die[4]-1][2]:^15}|   * Category name or number (1-13) both work.      |")
@@ -736,8 +706,7 @@ if __name__ == "__main__":
             
             rollDie(die_values, freeze_values)
             
-            
-        
+
         round_scores = calcHandScores(die_values)
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores)
         
@@ -754,10 +723,11 @@ if __name__ == "__main__":
                     break
             else:
                 print("Please enter a valid score category.\n")
-                
-        printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores)
-        
-        input(f"End of turn. Press ENTER to continue to PLAYER {(turn + 1) % n_players + 1}'S turn:\n")
+
+        player_scores[current_player].commands_dict[response.upper()](player_scores[current_player], round_scores)
+
+        printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores, True)
+        input()
     
     print("\nFINAL SCOREBOARD")
     print("----------------")
@@ -769,3 +739,47 @@ if __name__ == "__main__":
         print(f"PLAYER {player + 1}: {total_score} POINTS")
     print("----------------")
     displayVictor(*final_scores)
+    
+    """for player in range(n_players):
+        player_scores[player].calcTotal()
+        total_score = player_scores[player].total
+        print(f"PLAYER {player+1}'S TOTAL SCORE: {total_score}")
+
+    displayVictor(player_scores[0].total, player_scores[1].total, player_scores[2].total, player_scores[3].total)
+    """
+
+
+    # My idea for the end of game display. Obviously the score numbers will not be 00 and will be blank if there is no player.
+    """
+                                FINAL SCORES
+            16             12           12           12           12
+    ______________________________________________________________________
+    |    CATEGORY    |  PLAYER 1  |  PLAYER 2  |  PLAYER 3  |  PLAYER 4  |
+    |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
+    |  ACES          |     00     |     00     |     00     |     00     |
+    |  TWOS          |     00     |     00     |     00     |     00     |
+    |  THREES        |     00     |     00     |     00     |     00     |
+    |  FOURS         |     00     |     00     |     00     |     00     |
+    |  FIVES         |     00     |     00     |     00     |     00     |
+    |  SIXES         |     00     |     00     |     00     |     00     |
+    |--------------------------------------------------------------------|
+    |  DIGITS TOTAL  |     00     |     00     |     00     |     00     |
+    |  BONUS IF >62  |     00     |     00     |     00     |     00     |
+    |  TOP TOTAL     |     00     |     00     |     00     |     00     |
+    |--------------------------------------------------------------------|
+    |  3 OF A KIND   |     00     |     00     |     00     |     00     |
+    |  4 OF A KIND   |     00     |     00     |     00     |     00     |
+    |  FULL HOUSE    |     00     |     00     |     00     |     00     |
+    |  SM. STRAIGHT  |     00     |     00     |     00     |     00     |
+    |  LG. STRAIGHT  |     00     |     00     |     00     |     00     |
+    |  YAHTZEE       |     00     |     00     |     00     |     00     |
+    |  CHANCE        |     00     |     00     |     00     |     00     |
+    |--------------------------------------------------------------------|
+    |  YAHTZEE BONUS |     00     |     00     |     00     |     00     |
+    |  BOTTOM TOTAL  |     00     |     00     |     00     |     00     |
+    |--------------------------------------------------------------------|
+    |                |            |            |            |            |
+    |  GRAND TOTAL   |     00     |     00     |     00     |     00     |
+    |                |            |            |            |            |
+    ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+    """
