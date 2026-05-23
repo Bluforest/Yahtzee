@@ -143,8 +143,8 @@ def printGameDisplay(player, round, rerolls, die, scorecard, round_score, result
 
     print(f"|{die_faces[die[1]-1][4]:^15}|" + "-"*52 + "|")
 
-    print(f"|{die_faces[die[2]-1][0]:^15}|" + f" {'[8]':<5}{'4 OF A KIND':<13}|" + f"{formatScore(scorecard.four_kind):^16}" + "|" + f"{formatScore(round_score['four kind'], scorecard.four_kind != "BLANK"):^15}" + "|")
-    print(f"|{die_faces[die[2]-1][1]:^15}|" + f" {'[7]':<5}{'3 OF A KIND':<13}|" + f"{formatScore(scorecard.three_kind):^16}" + "|" + f"{formatScore(round_score['three kind'], scorecard.three_kind != "BLANK"):^15}" + "|")    
+    print(f"|{die_faces[die[2]-1][0]:^15}|" + f" {'[7]':<5}{'3 OF A KIND':<13}|" + f"{formatScore(scorecard.three_kind):^16}" + "|" + f"{formatScore(round_score['three kind'], scorecard.three_kind != "BLANK"):^15}" + "|")
+    print(f"|{die_faces[die[2]-1][1]:^15}|" + f" {'[8]':<5}{'4 OF A KIND':<13}|" + f"{formatScore(scorecard.four_kind):^16}" + "|" + f"{formatScore(round_score['four kind'], scorecard.four_kind != "BLANK"):^15}" + "|")
     print(f"|{die_faces[die[2]-1][2]:^15}|" + f" {'[9]':<5}{'FULL HOUSE':<13}|" + f"{formatScore(scorecard.full_house):^16}" + "|" + f"{formatScore(round_score['full house'], scorecard.full_house != "BLANK"):^15}" + "|")
     print(f"|{die_faces[die[2]-1][3]:^15}|" + f" {'[10]':<5}{'SM. STRAIGHT':<13}|" + f"{formatScore(scorecard.sm_straight):^16}" + "|" + f"{formatScore(round_score['sm straight'], scorecard.sm_straight != "BLANK"):^15}" + "|")
     print(f"|{die_faces[die[2]-1][4]:^15}|" + f" {'[11]':<5}{'LG. STRAIGHT':<13}|" + f"{formatScore(scorecard.lg_straight):^16}" + "|" + f"{formatScore(round_score['lg straight'], scorecard.lg_straight != "BLANK"):^15}" + "|")
@@ -624,7 +624,7 @@ if __name__ == "__main__":
                 menu = "EXAMPLE SCORES"
             elif response.strip().lower() == "start":
                 in_menu = False
-           else:
+            else:
                 print("Invalid input. Please type START, HELP, RULES, SCORE, or SETTINGS.\n")
         
         # Settings Menu
@@ -698,7 +698,7 @@ if __name__ == "__main__":
                             raise ValueError
                         freeze_values[die_index] = True
                     valid_input = True
-                except ValueError:
+                except:
                     print("Invalid input. Please enter \"KEEP\" or dice numbers between 1 and 5, separated by spaces.")
             
             if end_rerolls:
@@ -739,15 +739,6 @@ if __name__ == "__main__":
         print(f"PLAYER {player + 1}: {total_score} POINTS")
     print("----------------")
     displayVictor(*final_scores)
-    
-    """for player in range(n_players):
-        player_scores[player].calcTotal()
-        total_score = player_scores[player].total
-        print(f"PLAYER {player+1}'S TOTAL SCORE: {total_score}")
-
-    displayVictor(player_scores[0].total, player_scores[1].total, player_scores[2].total, player_scores[3].total)
-    """
-
 
     # My idea for the end of game display. Obviously the score numbers will not be 00 and will be blank if there is no player.
     """
