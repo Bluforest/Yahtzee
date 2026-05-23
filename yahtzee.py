@@ -689,8 +689,7 @@ if __name__ == "__main__":
             
             rollDie(die_values, freeze_values)
             
-            
-        
+
         round_scores = calcHandScores(die_values)
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores)
         
@@ -716,3 +715,39 @@ if __name__ == "__main__":
         print(f"PLAYER {player+1}'S TOTAL SCORE: {total_score}")
 
     displayVictor(player_scores[0].total, player_scores[1].total, player_scores[2].total, player_scores[3].total)
+
+
+    # My idea for the end of game display. Obviously the score numbers will not be 00 and will be blank if there is no player.
+    """
+                                FINAL SCORES
+            16             12           12           12           12
+    ______________________________________________________________________
+    |    CATEGORY    |  PLAYER 1  |  PLAYER 2  |  PLAYER 3  |  PLAYER 4  |
+    |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
+    |  ACES          |     00     |     00     |     00     |     00     |
+    |  TWOS          |     00     |     00     |     00     |     00     |
+    |  THREES        |     00     |     00     |     00     |     00     |
+    |  FOURS         |     00     |     00     |     00     |     00     |
+    |  FIVES         |     00     |     00     |     00     |     00     |
+    |  SIXES         |     00     |     00     |     00     |     00     |
+    |--------------------------------------------------------------------|
+    |  DIGITS TOTAL  |     00     |     00     |     00     |     00     |
+    |  BONUS IF >62  |     00     |     00     |     00     |     00     |
+    |  TOP TOTAL     |     00     |     00     |     00     |     00     |
+    |--------------------------------------------------------------------|
+    |  3 OF A KIND   |     00     |     00     |     00     |     00     |
+    |  4 OF A KIND   |     00     |     00     |     00     |     00     |
+    |  FULL HOUSE    |     00     |     00     |     00     |     00     |
+    |  SM. STRAIGHT  |     00     |     00     |     00     |     00     |
+    |  LG. STRAIGHT  |     00     |     00     |     00     |     00     |
+    |  YAHTZEE       |     00     |     00     |     00     |     00     |
+    |  CHANCE        |     00     |     00     |     00     |     00     |
+    |--------------------------------------------------------------------|
+    |  YAHTZEE BONUS |     00     |     00     |     00     |     00     |
+    |  BOTTOM TOTAL  |     00     |     00     |     00     |     00     |
+    |--------------------------------------------------------------------|
+    |                |            |            |            |            |
+    |  GRAND TOTAL   |     00     |     00     |     00     |     00     |
+    |                |            |            |            |            |
+    ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+    """
