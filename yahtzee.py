@@ -21,7 +21,7 @@ def formatScore(num, been_recorded = False):
         num (string): The formatted number with a leading zero if necessary or two spaces if blank.
         been_recorded (boolean): True if the given score category has been recorded, false otherwise."""
     
-    if been_recorded or num == "BLANK" or num == -1:
+    if been_recorded or num == "BLANK" or num == "" or num == -1:
         return "  "
     elif int(num) // 10 == 0:
         return f"{int(num):02d}"
@@ -179,6 +179,100 @@ def printGameDisplay(player, round, rerolls, die, scorecard, round_score, result
 
     print("|               |                                                    |")
     print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")    
+
+def catStrCleanup(string):
+    """TODO make a docstring here"""
+    clean_string = string.replace("_", " ")
+
+    number_words = {"three": "3", "four": "4"}
+
+    if "kind" in clean_string:
+        return (number_words[clean_string[:clean_string.find(' kind')]]+" of a "+clean_string[clean_string.find('kind'):]).upper()
+    if "straight" in clean_string:
+        return (clean_string[:clean_string.find(' straight')]+"."+clean_string[clean_string.find(' straight'):]).upper()
+    return clean_string.upper()
+
+def printFinalScores(player_scores, final_scores):
+    """TODO make a docstring here
+    final_scores in the program is final_scores outside too
+    """
+    print(f"{'FINAL SCORES':^70}")
+    print("_"*70)
+    print(f"|{'CATEGORY':^16}|{'PLAYER 1':^12}|{'PLAYER 2':^12}|{'PLAYER 3':^12}|{'PLAYER 4':^12}|")
+    print("|" + "‾"*68 + "|")
+
+    category_names = ["aces", "twos", "threes", "fours", "fives", "sixes"]
+
+    for category in category_names:
+        print(f"|  {category.upper():14}|", end="")
+        for i in range(4):
+            print(f"{formatScore(getattr(player_scores[i], category)):^12}", end="|")
+        print()
+
+    print("|" + "-"*68 + "|")
+
+    print(f"|  {'DIGITS TOTAL':14}|", end="")
+    for i in range(4):
+        if player_scores[i].aces != "BLANK":
+            print(f"{formatScore(player_scores[i].aces + player_scores[i].twos + player_scores[i].threes + player_scores[i].fours + player_scores[i].fives + player_scores[i].sixes):^12}", end="|")
+        else:
+            print(" "*12, end="|")
+    print()
+
+    print(f"|  {'BONUS IF >62':14}|", end="")
+    for i in range(4):
+        print(f"{formatScore(player_scores[i].bonus):^12}", end="|")
+    print()
+
+    print(f"|  {'TOP TOTAL':14}|", end="")
+    for i in range(4):
+        if player_scores[i].aces != "BLANK":
+            print(f"{formatScore(player_scores[i].aces + player_scores[i].twos + player_scores[i].threes + player_scores[i].fours + player_scores[i].fives + player_scores[i].sixes + player_scores[i].bonus):^12}", end="|")
+        else:
+            print(" "*12, end="|")
+    print()
+
+    print("|" + "-"*68 + "|")
+
+    category_names = ["three_kind", "four_kind", "full_house", "sm_straight", "lg_straight", "yahtzee", "chance"]
+
+    for category in category_names:
+        print(f"|  {catStrCleanup(category):14}|", end="")
+        for i in range(4):
+            print(f"{formatScore(getattr(player_scores[i], category)):^12}", end="|")
+        print()
+
+    print("|" + "-"*68 + "|")
+
+    print(f"|  {'YAHTZEE BONUS':14}|", end="")
+    for i in range(4):
+        if player_scores[i].aces != "BLANK":
+            print(f"{formatScore(player_scores[i].yahtzee_bonus):^12}", end="|")
+        else:
+            print(" "*12, end="|")
+    print()
+
+    print(f"|  {'BOTTOM TOTAL':14}|", end="")
+    for i in range(4):
+        if player_scores[i].aces != "BLANK":
+            print(f"{formatScore(player_scores[i].three_kind + player_scores[i].four_kind + player_scores[i].full_house + player_scores[i].sm_straight + player_scores[i].lg_straight + player_scores[i].yahtzee + player_scores[i].chance + player_scores[i].yahtzee_bonus):^12}", end="|")
+        else:
+            print(" "*12, end="|")
+    print()
+
+    print("|" + "-"*68 + "|")
+    print("", " "*16, " "*12, " "*12, " "*12, " "*12, "", sep="|")
+
+    print(f"|  {'GRAND TOTAL':14}|", end="")
+    for i in range(4):
+        if player_scores[i].aces != "BLANK":
+            print(f"{formatScore(final_scores[i]):^12}", end="|")
+        else:
+            print(" "*12, end="|")
+    print()
+
+    print("", " "*16, " "*12, " "*12, " "*12, " "*12, "", sep="|")
+    print("‾"*70)
 
 def handChecker(die):
     """Returns a dictionary of whether or not the die values specified by the argument satisfies the requirements for any of the Yahtzee hands.
@@ -729,48 +823,10 @@ if __name__ == "__main__":
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores, True)
         input()
     
-    print("\nFINAL SCOREBOARD")
-    print("----------------")
     final_scores = []
     for player in range(n_players):
         player_scores[player].calcTotal()
-        total_score = player_scores[player].total
-        final_scores.append(total_score)
-        print(f"PLAYER {player + 1}: {total_score} POINTS")
-    print("----------------")
+        final_scores.append(player_scores[player].total)
+    
+    printFinalScores(player_scores, final_scores)
     displayVictor(*final_scores)
-
-    # My idea for the end of game display. Obviously the score numbers will not be 00 and will be blank if there is no player.
-    """
-                                FINAL SCORES
-            16             12           12           12           12
-    ______________________________________________________________________
-    |    CATEGORY    |  PLAYER 1  |  PLAYER 2  |  PLAYER 3  |  PLAYER 4  |
-    |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
-    |  ACES          |     00     |     00     |     00     |     00     |
-    |  TWOS          |     00     |     00     |     00     |     00     |
-    |  THREES        |     00     |     00     |     00     |     00     |
-    |  FOURS         |     00     |     00     |     00     |     00     |
-    |  FIVES         |     00     |     00     |     00     |     00     |
-    |  SIXES         |     00     |     00     |     00     |     00     |
-    |--------------------------------------------------------------------|
-    |  DIGITS TOTAL  |     00     |     00     |     00     |     00     |
-    |  BONUS IF >62  |     00     |     00     |     00     |     00     |
-    |  TOP TOTAL     |     00     |     00     |     00     |     00     |
-    |--------------------------------------------------------------------|
-    |  3 OF A KIND   |     00     |     00     |     00     |     00     |
-    |  4 OF A KIND   |     00     |     00     |     00     |     00     |
-    |  FULL HOUSE    |     00     |     00     |     00     |     00     |
-    |  SM. STRAIGHT  |     00     |     00     |     00     |     00     |
-    |  LG. STRAIGHT  |     00     |     00     |     00     |     00     |
-    |  YAHTZEE       |     00     |     00     |     00     |     00     |
-    |  CHANCE        |     00     |     00     |     00     |     00     |
-    |--------------------------------------------------------------------|
-    |  YAHTZEE BONUS |     00     |     00     |     00     |     00     |
-    |  BOTTOM TOTAL  |     00     |     00     |     00     |     00     |
-    |--------------------------------------------------------------------|
-    |                |            |            |            |            |
-    |  GRAND TOTAL   |     00     |     00     |     00     |     00     |
-    |                |            |            |            |            |
-    ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-    """
