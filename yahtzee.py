@@ -627,7 +627,6 @@ if __name__ == "__main__":
                 case "start" | "begin":
                     in_menu = False
                 case _:
-                    # TODO Change this to something that makes sense given that the same option is immediately presented to the user.
                     print("\nNot a valid menu option. Please type \"START\", \"HELP\", \"RULES\", \"SCORE\", or \"SETTINGS\".")
         
         # TODO When colors show up maybe also make a setting to change the colors.
@@ -716,27 +715,27 @@ if __name__ == "__main__":
 
                     input("Press ENTER to continue.")
                 case "2" | "four of a kind" | "4 of a kind" | "four kind" | "4 kind":
-                    # TODO unfinished
+                    # TODO Unfinished, use the three of a kind example for inspiration.
                     pass
                 case "3" | "full house":
-                    # TODO unfinished
+                    # TODO Unfinished, use the three of a kind example for inspiration.
                     pass
                 case "4" | "small straight" | "sm straight" | "sm. straight":
-                    # TODO unfinished
+                    # TODO Unfinished, use the three of a kind example for inspiration.
                     pass
                 case "5" | "large straight" | "lg straight" | "lg. straight":
-                    # TODO unfinished
+                    # TODO Unfinished, use the three of a kind example for inspiration.
                     pass
                 case "6" | "yahtzee" | "five of a kind" | "five kind" | "5 of a kind" | "5 kind":
-                    # TODO unfinished
+                    # TODO Unfinished, use the three of a kind example for inspiration.
                     pass
                 case "7" | "chance" | "sum" | "total":
-                    # TODO unfinished
+                    # TODO Unfinished, use the three of a kind example for inspiration.
                     pass
                 case "exit" | "8" | "leave" | "return":
                     menu = "MAIN"
                 case _:
-                    # TODO unfinished
+                    # TODO This is the catch-all case. Say something like "invalid input".
                     pass
 
 
