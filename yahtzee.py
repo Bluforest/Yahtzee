@@ -28,7 +28,6 @@ def formatScore(num, been_recorded = False):
     else:
         return str(num)
 
-# TODO Display all participating players' score cards (only the 'recorded score' section)
 def displayVictor(*scores):
     """Finds and prints the winning player, or determines if there's a tie between two players.
     Args:
@@ -103,7 +102,7 @@ def printDie(die):
             print(die_faces[face-1][row], end="   ")
         print()
 
-def printGameDisplay(player, round, rerolls, die, scorecard, round_score, results=False):
+def printGameDisplay(player, round, rerolls, die, scorecard, round_score, results = False):
     """Displays the player's roll, their score card, and other pertinent information through the use of multiple print() calls.
 
     Args:
@@ -113,7 +112,7 @@ def printGameDisplay(player, round, rerolls, die, scorecard, round_score, result
         die (list): A list of 5 integers representing the player's dice rolls.
         scorecard (object): The current player's scorecard object.
         round_score (dictionary): Parse in the result of calcHandScores() on the player's current hand.
-        reuslts (boolean): Decides on which set of instructions to give the player in the bottom-left corner of the box.
+        results (boolean): Decides on which set of instructions to give the player in the bottom-right corner of the box.
     """
 
     print("_"*70)
@@ -181,7 +180,12 @@ def printGameDisplay(player, round, rerolls, die, scorecard, round_score, result
     print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")    
 
 def catStrCleanup(string):
-    """TODO make a docstring here"""
+    """Short for Category String Cleanup. Turns the internal score category names (eg. "sm_straight", "four_kind") into something that can be presented to the public.
+    Used when iterating over the dictionary of score categories and printing the reuslt.
+
+    Args:
+        string (string): The string to clean up. This should be the internal dictionary key for one of the yahtzee score category names.
+    """
     clean_string = string.replace("_", " ")
 
     number_words = {"three": "3", "four": "4"}
@@ -193,8 +197,11 @@ def catStrCleanup(string):
     return clean_string.upper()
 
 def printFinalScores(player_scores, final_scores):
-    """TODO make a docstring here
-    final_scores in the program is final_scores outside too
+    """Creates and prints a tabulated display of each active player's end-of-game scores. Should only be called at the end of the game.
+
+    Args:
+        player_scores (list): A list of ScoreCard objects representing each player's scorecard. Should be the same as the global variable of the same name.
+        final_scores (list): A list of integers representing each player's final scores. Should be the same as the global variable of the same name.
     """
     print(f"{'FINAL SCORES':^70}")
     print("_"*70)
@@ -416,10 +423,10 @@ class ScoreCard:
 
         self.yahtzee_bonus = 0        # Score: 100 per Yahtzee achieved during the game | Requirement: None
 
-        self.digits_total = -1         # Total of all scores in categories aces-sixes. Placeholder -1
-        self.top_total = -1            # Total of all scores in categories aces-sixes and the bonus if applicable. Placeholder -1
-        self.bottom_total = -1         # Total of all scores in all categories after bonus, including yahtzee bonus. Placeholder -1
-        self.total = -1                # The total score. This will be calculated at the end of the game. Placeholder -1
+        self.digits_total = -1        # Total of all scores in categories aces-sixes. Placeholder -1
+        self.top_total = -1           # Total of all scores in categories aces-sixes and the bonus if applicable. Placeholder -1
+        self.bottom_total = -1        # Total of all scores in all categories after bonus, including yahtzee bonus. Placeholder -1
+        self.total = -1               # The total score. This will be calculated at the end of the game. Placeholder -1
     
     def calcTotal(self):
         self.total = self.aces + self.twos + self.threes + self.fours + self.fives + self.sixes + self.bonus + self.three_kind + self.four_kind + self.full_house + self.sm_straight + self.lg_straight + self.yahtzee + self.chance
@@ -442,15 +449,6 @@ class ScoreCard:
         
         self.aces = round_scores["aces"]
         self.recordBonus()
-
-        """
-        score_add = 0
-        for value in die:
-            if value == 1:
-                score_add += value
-        
-        self.aces = score_add
-        """
     
     def recordTwos(self, round_scores):
         # Checks if the aces have been recorded already
@@ -459,15 +457,6 @@ class ScoreCard:
         
         self.twos = round_scores["twos"]
         self.recordBonus()
-
-        """
-        score_add = 0
-        for value in die:
-            if value == 2:
-                score_add += value
-        
-        self.twos = score_add
-        """
     
     def recordThrees(self, round_scores):
         # Checks if the aces have been recorded already
@@ -476,15 +465,6 @@ class ScoreCard:
         
         self.threes = round_scores["threes"]
         self.recordBonus()
-
-        """
-        score_add = 0
-        for value in die:
-            if value == 3:
-                score_add += value
-        
-        self.threes = score_add
-        """
     
     def recordFours(self, round_scores):
         # Checks if the aces have been recorded already
@@ -494,14 +474,6 @@ class ScoreCard:
         self.fours = round_scores["fours"]
         self.recordBonus()
 
-        """
-        score_add = 0
-        for value in die:
-            if value == 4:
-                score_add += value
-        
-        self.fours = score_add
-        """
     
     def recordFives(self, round_scores):
         # Checks if the aces have been recorded already
@@ -510,15 +482,6 @@ class ScoreCard:
         
         self.fives = round_scores["fives"]
         self.recordBonus()
-
-        """
-        score_add = 0
-        for value in die:
-            if value == 5:
-                score_add += value
-        
-        self.fives = score_add
-        """
     
     def recordSixes(self, round_scores):
         # Checks if the aces have been recorded already
@@ -527,103 +490,48 @@ class ScoreCard:
         
         self.sixes = round_scores["sixes"]
         self.recordBonus()
-
-        """
-        score_add = 0
-        for value in die:
-            if value == 6:
-                score_add += value
-        
-        self.sixes = score_add
-        """
     
     def recordThreeKind(self, round_scores):
         if not self.three_kind == "BLANK":
             return -1
         
         self.three_kind = round_scores["three kind"]
-
-        """
-        if handChecker(die)["three kind"]:
-            self.three_kind = sum(die)
-        else:
-            self.three_kind = 0
-        """
     
     def recordFourKind(self, round_scores):
         if not self.four_kind == "BLANK":
             return -1
         
         self.four_kind = round_scores["four kind"]
-        
-        """
-        if handChecker(die)["four kind"]:
-            self.four_kind = sum(die)
-        else:
-            self.four_kind = 0
-        """
     
     def recordFullHouse(self, round_scores):
         if not self.full_house == "BLANK":
             return -1
         
         self.full_house = round_scores["full house"]
-        
-        """
-        if handChecker(die)["full house"]:
-            self.full_house = 25
-        else:
-            self.full_house = 0
-        """
-    
+
     def recordSmallStraight(self, round_scores):
         if not self.sm_straight == "BLANK":
             return -1
         
         self.sm_straight = round_scores["sm straight"]
-
-        """
-        if handChecker(die)["sm straight"]:
-            self.sm_straight = 30
-        else:
-            self.sm_straight = 0
-        """
     
     def recordLargeStraight(self, round_scores):
         if not self.lg_straight == "BLANK":
             return -1
         
         self.lg_straight = round_scores["lg straight"]
-
-        """
-        if handChecker(die)["lg straight"]:
-            self.lg_straight = 40
-        else:
-            self.lg_straight = 0
-        """
     
     def recordChance(self, round_scores):
         if not self.chance == "BLANK":
             return -1
         
         self.chance = round_scores["chance"]
-
-        """
-        self.chance = sum(die)
-        """
     
     def recordYahtzee(self, round_scores):
         if not self.yahtzee == "BLANK":
             return -1
         
         self.yahtzee = round_scores["yahtzee"]
-
-        """
-        if handChecker(die)["yahtzee"]:
-            self.yahtzee = 50
-        else:
-            self.yahtzee = 0
-        """
     
     commands_dict = {
         "1": recordAces,
@@ -658,10 +566,12 @@ class ScoreCard:
         "10": recordSmallStraight,
         10: recordSmallStraight,
         "SM. STRAIGHT": recordSmallStraight,
+        "SM STRAIGHT": recordSmallStraight,
         "SMALL STRAIGHT": recordSmallStraight,
         "11": recordLargeStraight,
         11: recordLargeStraight,
         "LG. STRAIGHT": recordLargeStraight,
+        "LG STRAIGHT": recordLargeStraight,
         "LARGE STRAIGHT": recordLargeStraight,
         "12": recordYahtzee,
         12: recordYahtzee,
@@ -693,53 +603,90 @@ if __name__ == "__main__":
     # EXAMPLE SCORES    - Basic explanation of the special dice hands.
 
     # Game state and settings
-    in_menu = True
-    menu = "MAIN"
+    in_menu = True    # False = Game Starts
+    menu = "MAIN"     # Default
+    keep_dice = True  # As opposed to the player selecting the dice they wish to REROLL
 
     # Main Menu
     while in_menu:
         # Select which menu you want or start the game
         if menu == "MAIN":
-            print("\nMAIN MENU")
-            print("Type START to begin the game.")
-            print("Type HELP to learn the controls.")
-            print("Type RULES to learn how Yahtzee works.")
-            print("Type SCORE to see scoring examples.")
-            print("Type SETTINGS to view current settings.\n")
-            response = input("Enter your choice: ")
+            print("\n"+"_"*50)
+            print("MAIN MENU\nType START to begin the game.\nType SETTINGS to view and change current settings.\nType RULES to learn how Yahtzee works.\nType SCORE to see scoring examples.\nType HELP to learn the controls.")
+            response = input("\nEnter your choice: ")
 
-            if response.strip().lower() == "settings":
-                menu = "SETTINGS"
-            elif response.strip().lower() == "help":
-                menu = "CONTROLS"
-            elif response.strip().lower() == "rules":
-                menu = "RULES"
-            elif response.strip().lower() == "score":
-                menu = "EXAMPLE SCORES"
-            elif response.strip().lower() == "start":
-                in_menu = False
-            else:
-                print("Invalid input. Please type START, HELP, RULES, SCORE, or SETTINGS.\n")
+            match response.strip().lower():
+                case "settings" | "setting":
+                    menu = "SETTINGS"
+                case "help" | "controls":
+                    menu = "CONTROLS"
+                case "rules" | "rule":
+                    menu = "RULES"
+                case "score" | "scores":
+                    menu = "EXAMPLE SCORES"
+                case "start" | "begin":
+                    in_menu = False
+                case _:
+                    # TODO Change this to something that makes sense given that the same option is immediately presented to the user.
+                    print("\nNot a valid menu option. Please type \"START\", \"HELP\", \"RULES\", \"SCORE\", or \"SETTINGS\".")
         
+        # TODO When colors show up maybe also make a setting to change the colors.
         # Settings Menu
         if menu == "SETTINGS":
-            print("\nSETTINGS")
-            print(f"Number of players: {n_players}")
-            print("Players choose which dice to keep before rerolling.")
-            print("Type BACK to return to the main menu.\n")
-            input("Press ENTER to return: ")
-            menu = "MAIN"
+            print("\nSETTINGS\n")
+            print(f"[1] Change number of players. (Current: {n_players})")
+
+            keep_string = "KEEP" if keep_dice else "REROLL"
+            print(f"[2] Change whether you'd like to select dice to KEEP or REROLL. (Current: {keep_string})")
+            print("[3] Return to main menu.\n")
+            
+            response = input()
+
+            match response.strip().lower():
+                case "1" | "player" | "players":
+                    print("\nPlease enter the number of players (1-4).\n")
+                    response = input()
+
+                    while not response.isdigit() or not 1 <= int(response) <= 4:
+                        print("That's not a valid number of players. Please enter a number between 1 and 4.\n")
+                        response = input()
+
+                    n_players = int(response)
+                    continue
+                case "2" | "keep" | "reroll":
+                    keep_dice = not keep_dice
+                    continue
+                case "3" | "leave" | "return" | "exit":
+                    menu = "MAIN"
+                    continue
 
         # Controls Explanation
         if menu == "CONTROLS":
-            print("\nCONTROLS")
-            print("After each roll, type the dice numbers you want to KEEP.")
-            print("Example: typing 1 3 5 keeps dice #1, #3, and #5.")
-            print("Type KEEP if you do not want to reroll any dice.")
-            print("After the final roll, choose a score category.")
+            print("\n" + "_"*50 + "\nREROLLS")
+
+            if keep_dice:
+                print("After each roll, type numbers 1-5, separated by spaces, corresponding to the dice you wish to KEEP.")
+                print("Ex: typing \"1 3 5\" keeps dice #1, #3, and #5 and rerolls dice #2 and #4.\n")
+                print("Go to the SETTINGS menu if you wish to instead select the dice to REROLL.")
+            else:
+                print("After each roll, type numbers 1-5, separated by spaces, corresponding to the dice you wish to REROLL.")
+                print("Ex: typing \"1 3 5\" keeps dice #2 and #4 and rerolls dice #1, #3, and #5.\n")
+                print("Go to the SETTINGS menu if you wish to instead select the dice to KEEP.")
+            
+            print("Dice are ordered from top to bottom (eg. the die at the top is #1 and the die at the bottom is #5).\n")
+
+            print("Type KEEP to retain all dice and immediately skip to score selection.")
+            
+            print("\nRECORDING SCORE")
+            print("After the final roll, choose a score category.\nFor this, you may either enter the number in [brackets] to the left of the category or type the category name itself.") 
+
+            print("\nNAVIGATING MENUS")
+            print("All menus are case-insensitive. You do not need to type in all caps.\nUsually, you may type the menu name or its corresponding number.")
+
             input("\nPress ENTER to return: ")
             menu = "MAIN"
 
+        # TODO Elaborate on this a little bit.
         # Rules Explanation
         if menu == "RULES":
             print("\nRULES")
@@ -750,18 +697,50 @@ if __name__ == "__main__":
             input("\nPress ENTER to return: ")
             menu = "MAIN"
 
+        # TODO Make a sub-menu that allows players to specifiy which category they want and provide them with examples
         if menu == "EXAMPLE SCORES":
-            print("\nEXAMPLE SCORES")
-            print("Full House: three of one number and two of another = 25 points.")
-            print("Small Straight: four numbers in a row = 30 points.")
-            print("Large Straight: five numbers in a row = 40 points.")
-            print("Yahtzee: five matching dice = 50 points.")
-            print("Chance: total of all dice.")
-            input("\nPress ENTER to return: ")
-            menu = "MAIN"
+            print("\n" + "_"*50 + "\nEXAMPLE SCORES\n")
+            print("Please choose from the following:\n[1] Three of a Kind\n[2] Four of a Kind\n[3] Full House\n[4] Small Straight\n[5] Large Straight\n[6] Yahtzee\n[7] Chance\n[EXIT] Return to Main Menu\n")
+            response = input()
+            
+            match response.strip().lower():
+                case "1" | "three of a kind" | "3 of a kind" | "three kind" | "3 kind":
+                    print("_"*50)
+                    print("THREE OF A KIND\nYour hand qualifies as a Three of a Kind when at least three of your dice display the same number.\nFor valid hands, your Three of a Kind score is equal to the sum of all dice faces.\n\nEXAMPLES:")
+                    printDie([4, 6, 3, 4, 4])
+                    print("Score: 21 (4 + 6 + 3 + 4 + 4 = 21)\n")
+                    printDie([3, 1, 1, 1, 5])
+                    print("Score: 11 (3 + 1 + 1 + 1 + 5 = 11)\n")
+                    printDie([2, 2, 4, 4, 5])
+                    print("Score: 0 (Doesn't qualify)\n")
+
+                    input("Press ENTER to continue.")
+                case "2" | "four of a kind" | "4 of a kind" | "four kind" | "4 kind":
+                    # TODO unfinished
+                    pass
+                case "3" | "full house":
+                    # TODO unfinished
+                    pass
+                case "4" | "small straight" | "sm straight" | "sm. straight":
+                    # TODO unfinished
+                    pass
+                case "5" | "large straight" | "lg straight" | "lg. straight":
+                    # TODO unfinished
+                    pass
+                case "6" | "yahtzee" | "five of a kind" | "five kind" | "5 of a kind" | "5 kind":
+                    # TODO unfinished
+                    pass
+                case "7" | "chance" | "sum" | "total":
+                    # TODO unfinished
+                    pass
+                case "exit" | "8" | "leave" | "return":
+                    menu = "MAIN"
+                case _:
+                    # TODO unfinished
+                    pass
 
 
-    # Main program. Each player gets 13 turns.
+    # Main game. Each player gets 13 turns.
     for turn in range(n_players*13):
         die_values = [0, 0, 0, 0, 0]
         freeze_values = [False, False, False, False, False]
@@ -785,12 +764,21 @@ if __name__ == "__main__":
                         end_rerolls = True
                         break
                     
-                    freeze_values = [False, False, False, False, False]
-                    for die_number in response.split():
-                        die_index = int(die_number) - 1
-                        if die_index < 0 or die_index > 4:
-                            raise ValueError
-                        freeze_values[die_index] = True
+                    if keep_dice:
+                        freeze_values = [False, False, False, False, False]
+                        for die_number in response.strip().split():
+                            die_index = int(die_number) - 1
+                            if die_index < 0 or die_index > 4:
+                                raise ValueError
+                            freeze_values[die_index] = True
+                    else:
+                        freeze_values = [True, True, True, True, True]
+                        for die_number in response.strip().split():
+                            die_index = int(die_number) - 1
+                            if die_index < 0 or die_index > 4:
+                                raise ValueError
+                            freeze_values[die_index] = False
+                    
                     valid_input = True
                 except:
                     print("Invalid input. Please enter \"KEEP\" or dice numbers between 1 and 5, separated by spaces.")
@@ -818,11 +806,10 @@ if __name__ == "__main__":
             else:
                 print("Please enter a valid score category.\n")
 
-        player_scores[current_player].commands_dict[response.upper()](player_scores[current_player], round_scores)
-
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores, True)
         input()
     
+    # Show a tabulation of the final scores and state the winner.
     final_scores = []
     for player in range(n_players):
         player_scores[player].calcTotal()
