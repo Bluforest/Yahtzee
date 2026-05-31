@@ -716,27 +716,87 @@ if __name__ == "__main__":
                     input("Press ENTER to continue.")
                 case "2" | "four of a kind" | "4 of a kind" | "four kind" | "4 kind":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    case "2" | "four of a kind" | "4 of a kind" | "four kind" | "4 kind":
+                    print("_"*50)
+                    print("FOUR OF A KIND\nYour hand qualifies when at least four dice display the same number.")
+                    print("Your score is the sum of all dice faces.\n\nEXAMPLES:")
+                    printDie([6, 6, 6, 6, 2])
+                    print("Score: 26 (6 + 6 + 6 + 6 + 2 = 26)\n")
+                    printDie([3, 3, 3, 3, 5])
+                    print("Score: 17 (3 + 3 + 3 + 3 + 5 = 17)\n")
+                    printDie([2, 2, 2, 4, 5])
+                    print("Score: 0 (Doesn't qualify)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "3" | "full house":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("FULL HOUSE\nYour hand qualifies when you have three of one number and two of another number.")
+                    print("A Full House is worth 25 points.\n\nEXAMPLES:")
+                    printDie([2, 2, 3, 3, 3])
+                    print("Score: 25\n")
+                    printDie([5, 5, 5, 1, 1])
+                    print("Score: 25\n")
+                    printDie([4, 4, 4, 4, 2])
+                    print("Score: 0 (Doesn't qualify)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "4" | "small straight" | "sm straight" | "sm. straight":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("SMALL STRAIGHT\nYour hand qualifies when you have four dice in a row.")
+                    print("A Small Straight is worth 30 points.\n\nEXAMPLES:")
+                    printDie([1, 2, 3, 4, 6])
+                    print("Score: 30\n")
+                    printDie([2, 3, 4, 5, 5])
+                    print("Score: 30\n")
+                    printDie([1, 2, 4, 5, 6])
+                    print("Score: 0 (Doesn't qualify)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "5" | "large straight" | "lg straight" | "lg. straight":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("LARGE STRAIGHT\nYour hand qualifies when all five dice are in a row.")
+                    print("A Large Straight is worth 40 points.\n\nEXAMPLES:")
+                    printDie([1, 2, 3, 4, 5])
+                    print("Score: 40\n")
+                    printDie([2, 3, 4, 5, 6])
+                    print("Score: 40\n")
+                    printDie([1, 2, 3, 4, 6])
+                    print("Score: 0 (Only a small straight)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "6" | "yahtzee" | "five of a kind" | "five kind" | "5 of a kind" | "5 kind":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("YAHTZEE\nYour hand qualifies when all five dice display the same number.")
+                    print("A Yahtzee is worth 50 points.\n\nEXAMPLES:")
+                    printDie([6, 6, 6, 6, 6])
+                    print("Score: 50\n")
+                    printDie([1, 1, 1, 1, 1])
+                    print("Score: 50\n")
+                    printDie([4, 4, 4, 4, 2])
+                    print("Score: 0 (Doesn't qualify)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "7" | "chance" | "sum" | "total":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("CHANCE\nChance has no special requirement.")
+                    print("Your score is simply the sum of all dice faces.\n\nEXAMPLES:")
+                    printDie([1, 3, 4, 5, 6])
+                    print("Score: 19 (1 + 3 + 4 + 5 + 6 = 19)\n")
+                    printDie([2, 2, 2, 5, 6])
+                    print("Score: 17 (2 + 2 + 2 + 5 + 6 = 17)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "exit" | "8" | "leave" | "return":
                     menu = "MAIN"
                 case _:
                     # TODO This is the catch-all case. Say something like "invalid input".
-                    pass
+                    print("\nInvalid input. Please choose one of the listed options.\n")
+                    
 
 
     # Main game. Each player gets 13 turns.
