@@ -429,7 +429,7 @@ class ScoreCard:
         self.total = -1               # The total score. This will be calculated at the end of the game. Placeholder -1
     
     def calcTotal(self):
-        self.total = self.aces + self.twos + self.threes + self.fours + self.fives + self.sixes + self.bonus + self.three_kind + self.four_kind + self.full_house + self.sm_straight + self.lg_straight + self.yahtzee + self.chance
+        self.total = self.aces + self.twos + self.threes + self.fours + self.fives + self.sixes + self.bonus + self.three_kind + self.four_kind + self.full_house + self.sm_straight + self.lg_straight + self.yahtzee + self.chance + self.yahtzee_bonus
 
     def recordBonus(self):
         if not self.aces == "BLANK" and not self.twos == "BLANK" and not self.threes == "BLANK" and not self.fours == "BLANK" and not self.fives == "BLANK" and not self.sixes == "BLANK":
@@ -438,8 +438,8 @@ class ScoreCard:
             else:
                 self.bonus = 0
     
-    def recordYahtzeeBonus(self, die):
-        if handChecker(die)["yahtzee"] and self.yahtzee == 50:
+    def recordYahtzeeBonus(self, round_scores):
+        if round_scores["yahtzee"] and self.yahtzee == 50:
             self.yahtzee_bonus += 100
     
     def recordAces(self, round_scores):
@@ -789,6 +789,7 @@ if __name__ == "__main__":
             
 
         round_scores = calcHandScores(die_values)
+        player_scores[current_player].recordYahtzeeBonus(round_scores)
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores)
         
         while True:
