@@ -1,5 +1,18 @@
 import random
 
+COLORS_ENABLED = True
+
+RESET = "\033[0m"
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+CYAN = "\033[96m"
+
+def colorize(text, color):
+    if COLORS_ENABLED:
+        return color + text + RESET
+    return text
+
 def rollDie(die, freeze):
     """Randomizes the value of die as long as the corresponding freeze value is false.
 
@@ -29,6 +42,19 @@ def formatScore(num, been_recorded = False):
         return str(num)
 
 def displayVictor(*scores):
+    max_score = max(scores)
+    winning_players = []
+
+    for i, score in enumerate(scores):
+        if score == max_score:
+            winning_players.append(i)
+    
+    if len(winning_players) > 1:
+        tied_players = [str(player + 1) for player in winning_players]
+        print(colorize(f"TIE BETWEEN PLAYERS {', '.join(tied_players)}!", YELLOW))
+    else:
+        print(colorize(f"PLAYER {winning_players[0] + 1} WINS!", GREEN))
+        
     """Finds and prints the winning player, or determines if there's a tie between two players.
     Args:
         scores: Can be either a list of players' scores or all of them in a tuple within the argument field.
@@ -203,7 +229,7 @@ def printFinalScores(player_scores, final_scores):
         player_scores (list): A list of ScoreCard objects representing each player's scorecard. Should be the same as the global variable of the same name.
         final_scores (list): A list of integers representing each player's final scores. Should be the same as the global variable of the same name.
     """
-    print(f"{'FINAL SCORES':^70}")
+    print(colorize(f"{'FINAL SCORES':^70}", CYAN))
     print("_"*70)
     print(f"|{'CATEGORY':^16}|{'PLAYER 1':^12}|{'PLAYER 2':^12}|{'PLAYER 3':^12}|{'PLAYER 4':^12}|")
     print("|" + "‾"*68 + "|")
@@ -421,7 +447,7 @@ class ScoreCard:
         self.top_total = -1           # Total of all scores in categories aces-sixes and the bonus if applicable. Placeholder -1
         self.bottom_total = -1        # Total of all scores in all categories after bonus, including yahtzee bonus. Placeholder -1
         self.total = -1               # The total score. This will be calculated at the end of the game. Placeholder -1
-    
+        
     def calcTotal(self):
         self.total = self.aces + self.twos + self.threes + self.fours + self.fives + self.sixes + self.bonus + self.three_kind + self.four_kind + self.full_house + self.sm_straight + self.lg_straight + self.yahtzee + self.chance + self.yahtzee_bonus
 
@@ -631,7 +657,9 @@ if __name__ == "__main__":
 
             keep_string = "KEEP" if keep_dice else "REROLL"
             print(f"[2] Change whether you'd like to select dice to KEEP or REROLL. (Current: {keep_string})")
-            print("[3] Return to main menu.\n")
+            print(f"[3] Toggle colors. (Current: {'ON' if COLORS_ENABLED else 'OFF'})")
+            print("[4] Return to main menu.\n")
+            
             
             response = input()
 
@@ -649,9 +677,16 @@ if __name__ == "__main__":
                 case "2" | "keep" | "reroll":
                     keep_dice = not keep_dice
                     continue
-                case "3" | "leave" | "return" | "exit":
+                case "3" | "color" | "colors":
+                    COLORS_ENABLED = not COLORS_ENABLED
+                    continue
+                case "4" | "leave" | "return" | "exit":
                     menu = "MAIN"
                     continue
+                case _:
+                    print("\nInvalid option. Please choose 1-4.")
+                    continue
+
 
         # Controls Explanation
         if menu == "CONTROLS":
@@ -710,27 +745,86 @@ if __name__ == "__main__":
                     input("Press ENTER to continue.")
                 case "2" | "four of a kind" | "4 of a kind" | "four kind" | "4 kind":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("FOUR OF A KIND\nYour hand qualifies when at least four dice display the same number.")
+                    print("Your score is the sum of all dice faces.\n\nEXAMPLES:")
+                    printDie([6, 6, 6, 6, 2])
+                    print("Score: 26 (6 + 6 + 6 + 6 + 2 = 26)\n")
+                    printDie([3, 3, 3, 3, 5])
+                    print("Score: 17 (3 + 3 + 3 + 3 + 5 = 17)\n")
+                    printDie([2, 2, 2, 4, 5])
+                    print("Score: 0 (Doesn't qualify)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "3" | "full house":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("FULL HOUSE\nYour hand qualifies when you have three of one number and two of another number.")
+                    print("A Full House is worth 25 points.\n\nEXAMPLES:")
+                    printDie([2, 2, 3, 3, 3])
+                    print("Score: 25\n")
+                    printDie([5, 5, 5, 1, 1])
+                    print("Score: 25\n")
+                    printDie([4, 4, 4, 4, 2])
+                    print("Score: 0 (Doesn't qualify)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "4" | "small straight" | "sm straight" | "sm. straight":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("SMALL STRAIGHT\nYour hand qualifies when you have four dice in a row.")
+                    print("A Small Straight is worth 30 points.\n\nEXAMPLES:")
+                    printDie([1, 2, 3, 4, 6])
+                    print("Score: 30\n")
+                    printDie([2, 3, 4, 5, 5])
+                    print("Score: 30\n")
+                    printDie([1, 2, 4, 5, 6])
+                    print("Score: 0 (Doesn't qualify)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "5" | "large straight" | "lg straight" | "lg. straight":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("LARGE STRAIGHT\nYour hand qualifies when all five dice are in a row.")
+                    print("A Large Straight is worth 40 points.\n\nEXAMPLES:")
+                    printDie([1, 2, 3, 4, 5])
+                    print("Score: 40\n")
+                    printDie([2, 3, 4, 5, 6])
+                    print("Score: 40\n")
+                    printDie([1, 2, 3, 4, 6])
+                    print("Score: 0 (Only a small straight)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "6" | "yahtzee" | "five of a kind" | "five kind" | "5 of a kind" | "5 kind":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("YAHTZEE\nYour hand qualifies when all five dice display the same number.")
+                    print("A Yahtzee is worth 50 points.\n\nEXAMPLES:")
+                    printDie([6, 6, 6, 6, 6])
+                    print("Score: 50\n")
+                    printDie([1, 1, 1, 1, 1])
+                    print("Score: 50\n")
+                    printDie([4, 4, 4, 4, 2])
+                    print("Score: 0 (Doesn't qualify)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "7" | "chance" | "sum" | "total":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    pass
+                    print("_"*50)
+                    print("CHANCE\nChance has no special requirement.")
+                    print("Your score is simply the sum of all dice faces.\n\nEXAMPLES:")
+                    printDie([1, 3, 4, 5, 6])
+                    print("Score: 19 (1 + 3 + 4 + 5 + 6 = 19)\n")
+                    printDie([2, 2, 2, 5, 6])
+                    print("Score: 17 (2 + 2 + 2 + 5 + 6 = 17)\n")
+                    input("Press ENTER to continue.")
+                    
                 case "exit" | "8" | "leave" | "return":
                     menu = "MAIN"
                 case _:
                     # TODO This is the catch-all case. Say something like "invalid input".
-                    pass
+                    print(colorize("\nInvalid input. Please choose one of the listed options.\n", RED))
+                    
 
 
     # Main game. Each player gets 13 turns.
