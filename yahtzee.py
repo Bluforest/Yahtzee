@@ -378,23 +378,17 @@ def calcHandScores(die):
     for value in die:
         scores[number_to_category[value]] += value
     
-    if valid["three kind"]:
-        scores["three kind"] = sum(die)
-    
-    if valid["four kind"]:
-        scores["four kind"] = sum(die)
-    
-    if valid["full house"]:
-        scores["full house"] = 25
-    
-    if valid["sm straight"]:
-        scores["sm straight"] = 30
-    
-    if valid["lg straight"]:
-        scores["lg straight"] = 40
-    
-    if valid["yahtzee"]:
-        scores["yahtzee"] = 50
+    category_to_score = {
+        "three kind": sum(die),
+        "four kind": sum(die),
+        "full house": 25,
+        "sm straight": 30,
+        "lg straight": 40,
+        "yahtzee": 50
+    }
+
+    for category in category_to_score:
+        scores[category] = category_to_score[category] if valid[category] else 0
     
     scores["chance"] = sum(die)
     
