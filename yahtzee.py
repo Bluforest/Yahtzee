@@ -1,4 +1,10 @@
 import random
+COLORS_ENABLED = True
+
+RESET = "\033[0m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+CYAN = "\033[96m"
 
 def rollDie(die, freeze):
     """Randomizes the value of die as long as the corresponding freeze value is false.
@@ -530,6 +536,10 @@ class ScoreCard:
     def recordYahtzee(self, round_scores):
         if not self.yahtzee == "BLANK":
             return -1
+    def colorize(text, color):
+        if COLORS_ENABLED:
+            return color + text + RESET
+        return text
         
         self.yahtzee = round_scores["yahtzee"]
     
@@ -637,7 +647,9 @@ if __name__ == "__main__":
 
             keep_string = "KEEP" if keep_dice else "REROLL"
             print(f"[2] Change whether you'd like to select dice to KEEP or REROLL. (Current: {keep_string})")
-            print("[3] Return to main menu.\n")
+            print(f"[3] Toggle colors. (Current: {'ON' if COLORS_ENABLED else 'OFF'})")
+            print("[4] Return to main menu.\n")
+            
             
             response = input()
 
@@ -655,9 +667,13 @@ if __name__ == "__main__":
                 case "2" | "keep" | "reroll":
                     keep_dice = not keep_dice
                     continue
-                case "3" | "leave" | "return" | "exit":
+                case "3" | "color" | "colors":
+                    COLORS_ENABLED = not COLORS_ENABLED
+                    continue
+                case "4" | "leave" | "return" | "exit":
                     menu = "MAIN"
                     continue
+
 
         # Controls Explanation
         if menu == "CONTROLS":
