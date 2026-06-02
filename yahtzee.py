@@ -1,10 +1,16 @@
 import random
+
 COLORS_ENABLED = True
 
 RESET = "\033[0m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
 CYAN = "\033[96m"
+
+def colorize(text, color):
+    if COLORS_ENABLED:
+        return color + text + RESET
+    return text
 
 def rollDie(die, freeze):
     """Randomizes the value of die as long as the corresponding freeze value is false.
@@ -433,7 +439,7 @@ class ScoreCard:
         self.top_total = -1           # Total of all scores in categories aces-sixes and the bonus if applicable. Placeholder -1
         self.bottom_total = -1        # Total of all scores in all categories after bonus, including yahtzee bonus. Placeholder -1
         self.total = -1               # The total score. This will be calculated at the end of the game. Placeholder -1
-    
+        
     def calcTotal(self):
         self.total = self.aces + self.twos + self.threes + self.fours + self.fives + self.sixes + self.bonus + self.three_kind + self.four_kind + self.full_house + self.sm_straight + self.lg_straight + self.yahtzee + self.chance
 
@@ -536,10 +542,6 @@ class ScoreCard:
     def recordYahtzee(self, round_scores):
         if not self.yahtzee == "BLANK":
             return -1
-    def colorize(text, color):
-        if COLORS_ENABLED:
-            return color + text + RESET
-        return text
         
         self.yahtzee = round_scores["yahtzee"]
     
@@ -673,6 +675,9 @@ if __name__ == "__main__":
                 case "4" | "leave" | "return" | "exit":
                     menu = "MAIN"
                     continue
+                case _:
+                    print("\nInvalid option. Please choose 1-4.")
+                    continue
 
 
         # Controls Explanation
@@ -732,7 +737,6 @@ if __name__ == "__main__":
                     input("Press ENTER to continue.")
                 case "2" | "four of a kind" | "4 of a kind" | "four kind" | "4 kind":
                     # TODO Unfinished, use the three of a kind example for inspiration.
-                    case "2" | "four of a kind" | "4 of a kind" | "four kind" | "4 kind":
                     print("_"*50)
                     print("FOUR OF A KIND\nYour hand qualifies when at least four dice display the same number.")
                     print("Your score is the sum of all dice faces.\n\nEXAMPLES:")
@@ -891,4 +895,17 @@ if __name__ == "__main__":
         final_scores.append(player_scores[player].total)
     
     printFinalScores(player_scores, final_scores)
-    displayVictor(*final_scores)
+
+def displayVictor(*scores):
+    max_score = max(scores)
+    winning_players = []
+
+    for i, score in enumerate(scores):
+        if score == max_score:
+            winning_players.append(i)
+    
+    if len(winning_players) > 1:
+        tied_players = [str(player + 1) for player in winning_players]
+        print(colorize(f"TIE BETWEEN PLAYERS {', '.join(tied_players)}!", YELLOW))
+    else:
+        print(colorize(f"PLAYER {winning_players[0] + 1} WINS!", GREEN))
