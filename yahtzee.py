@@ -1,15 +1,18 @@
 import random
 
-COLORS_ENABLED = True
+colors_enabled = True
 
 RESET = "\033[0m"
 RED = "\033[91m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
+BLUE = "\033[94m"
+MAGENTA = "\033[95m"
 CYAN = "\033[96m"
+WHITE = "\033[97m"
 
 def colorize(text, color):
-    if COLORS_ENABLED:
+    if colors_enabled:
         return color + text + RESET
     return text
 
@@ -229,7 +232,7 @@ def printFinalScores(player_scores, final_scores):
         player_scores (list): A list of ScoreCard objects representing each player's scorecard. Should be the same as the global variable of the same name.
         final_scores (list): A list of integers representing each player's final scores. Should be the same as the global variable of the same name.
     """
-    print(colorize(f"{'FINAL SCORES':^70}", CYAN))
+    print(colorize(f"{'FINAL SCORES':^70}", BLUE))
     print("_"*70)
     print(f"|{'CATEGORY':^16}|{'PLAYER 1':^12}|{'PLAYER 2':^12}|{'PLAYER 3':^12}|{'PLAYER 4':^12}|")
     print("|" + "‾"*68 + "|")
@@ -604,13 +607,15 @@ class ScoreCard:
 # BELOW IS THE MAIN PROGRAM
 if __name__ == "__main__":
     player_scores = [ScoreCard(), ScoreCard(), ScoreCard(), ScoreCard()]
+    highlight_color = CYAN
+    highlight_color_name = "CYAN"
 
     # Getting the number of players
-    print("\nWelcome to a legally-distinct Yahtzee Python program!\nPlease enter the number of players (1-4).\n")
+    print(f"\nWelcome to a legally-distinct Yahtzee Python program!\nPlease enter the number of players ({colorize('1-4', highlight_color)}).\n")
     response = input()
 
     while not response.isdigit() or not 1 <= int(response) <= 4:
-        print("That's not a valid number of players. Please enter a number between 1 and 4.\n")
+        print(colorize("That's not a valid number of players. Please enter a number between 1 and 4.\n", RED))
         response = input()
 
     n_players = int(response)
@@ -628,12 +633,13 @@ if __name__ == "__main__":
     keep_dice = True  # As opposed to the player selecting the dice they wish to REROLL
 
     # Main Menu
+    # TODO Start filling out more colors. Currently I'm using WHTIE as a substitute for bold.
     while in_menu:
         # Select which menu you want or start the game
         if menu == "MAIN":
             print("\n"+"_"*50)
-            print("MAIN MENU\nType START to begin the game.\nType SETTINGS to view and change current settings.\nType RULES to learn how Yahtzee works.\nType SCORE to see scoring examples.\nType HELP to learn the controls.")
-            response = input("\nEnter your choice: ")
+            print(f"{colorize('MAIN MENU', WHITE)}\n\nType {colorize('START', highlight_color)} to begin the game.\nType {colorize('SETTINGS', highlight_color)} to view and change current settings.\nType {colorize('RULES', highlight_color)} to learn how Yahtzee works.\nType {colorize('SCORE', highlight_color)} to see scoring examples.\nType {colorize('HELP', highlight_color)} to learn the controls.")
+            response = input("\nENTER YOUR CHOICE: ")
 
             match response.strip().lower():
                 case "settings" | "setting":
@@ -647,29 +653,27 @@ if __name__ == "__main__":
                 case "start" | "begin":
                     in_menu = False
                 case _:
-                    print("\nNot a valid menu option. Please type \"START\", \"HELP\", \"RULES\", \"SCORE\", or \"SETTINGS\".")
+                    print(colorize("\nNot a valid menu option. Please type \"START\", \"HELP\", \"RULES\", \"SCORE\", or \"SETTINGS\".", RED))
         
-        # TODO When colors show up maybe also make a setting to change the colors.
         # Settings Menu
         if menu == "SETTINGS":
-            print("\nSETTINGS\n")
-            print(f"[1] Change number of players. (Current: {n_players})")
+            print("\n"+"_"*50)
+            print(f"{colorize('SETTINGS', WHITE)}\n")
+            print(f"[{colorize('1', highlight_color)}] Change number of players. (Current: {n_players})")
+            print(f"[{colorize('2', highlight_color)}] Change whether you'd like to select dice to KEEP or REROLL. (Current: {"KEEP" if keep_dice else "REROLL"})")
+            print(f"[{colorize('3', highlight_color)}] Toggle colors. (Current: {'ON' if colors_enabled else 'OFF'})")
+            print(f"[{colorize('4', highlight_color)}] Change highlight color. (CURRENT: {highlight_color_name})")
+            print(f"[{colorize('5', highlight_color)}] Return to main menu.\n")
 
-            keep_string = "KEEP" if keep_dice else "REROLL"
-            print(f"[2] Change whether you'd like to select dice to KEEP or REROLL. (Current: {keep_string})")
-            print(f"[3] Toggle colors. (Current: {'ON' if COLORS_ENABLED else 'OFF'})")
-            print("[4] Return to main menu.\n")
-            
-            
-            response = input()
+            response = input("ENTER YOUR CHOICE: ")
 
             match response.strip().lower():
                 case "1" | "player" | "players":
-                    print("\nPlease enter the number of players (1-4).\n")
+                    print(f"\nPlease enter the number of players ({colorize('1-4', highlight_color)}).\n")
                     response = input()
 
                     while not response.isdigit() or not 1 <= int(response) <= 4:
-                        print("That's not a valid number of players. Please enter a number between 1 and 4.\n")
+                        print(colorize("That's not a valid number of players. Please enter a number between 1 and 4.\n", RED))
                         response = input()
 
                     n_players = int(response)
@@ -678,37 +682,73 @@ if __name__ == "__main__":
                     keep_dice = not keep_dice
                     continue
                 case "3" | "color" | "colors":
-                    COLORS_ENABLED = not COLORS_ENABLED
+                    colors_enabled = not colors_enabled
                     continue
-                case "4" | "leave" | "return" | "exit":
+                case "4" | "highlight":
+                    while True:
+                        print("\n"+"_"*50)
+                        print(f"{colorize('HIGHLIGHT COLOR', WHITE)}\n")
+                        print(f"[{colorize('1', highlight_color)}] Select {colorize('CYAN', CYAN)}{' (CURRENT)' if highlight_color_name == 'CYAN' else ''}")
+                        print(f"[{colorize('2', highlight_color)}] Select {colorize('BLUE', BLUE)}{' (CURRENT)' if highlight_color_name == 'BLUE' else ''}")
+                        print(f"[{colorize('3', highlight_color)}] Select {colorize('MAGENTA', MAGENTA)}{' (CURRENT)' if highlight_color_name == 'MAGENTA' else ''}")
+                        print(f"[{colorize('4', highlight_color)}] Select {colorize('YELLOW', YELLOW)}{' (CURRENT)' if highlight_color_name == 'YELLOW' else ''}")
+                        print(f"[{colorize('5', highlight_color)}] Select {colorize('GREEN', GREEN)}{' (CURRENT)' if highlight_color_name == 'GREEN' else ''}")
+                        print(f"[{colorize('6', highlight_color)}] BACK")
+                        response = input("ENTER YOUR CHOICE: ")
+                        match response.strip().lower():
+                            case "1" | "cyan":
+                                highlight_color = CYAN
+                                highlight_color_name = "CYAN"
+                                break
+                            case "2" | "blue":
+                                highlight_color = BLUE
+                                highlight_color_name = "BLUE"
+                                break
+                            case "3" | "magenta":
+                                highlight_color = MAGENTA
+                                highlight_color_name = "MAGENTA"
+                                break
+                            case "4" | "yellow":
+                                highlight_color = YELLOW
+                                highlight_color_name = "YELLOW"
+                                break
+                            case "5" | "green":
+                                highlight_color = GREEN
+                                highlight_color_name = "GREEN"
+                                break
+                            case "6" | "back" | "exit" | "return" | "leave":
+                                break
+                            case _:
+                                print(colorize("Please select a valid option from the list.", RED))
+                case "5" | "leave" | "return" | "exit" | "back":
                     menu = "MAIN"
                     continue
                 case _:
-                    print("\nInvalid option. Please choose 1-4.")
+                    print(colorize("\nInvalid option. Please choose 1-4.", RED))
                     continue
 
 
         # Controls Explanation
         if menu == "CONTROLS":
-            print("\n" + "_"*50 + "\nREROLLS")
+            print("\n" + "_"*50 + "\n" + colorize("REROLLS", WHITE))
 
             if keep_dice:
-                print("After each roll, type numbers 1-5, separated by spaces, corresponding to the dice you wish to KEEP.")
-                print("Ex: typing \"1 3 5\" keeps dice #1, #3, and #5 and rerolls dice #2 and #4.\n")
-                print("Go to the SETTINGS menu if you wish to instead select the dice to REROLL.")
+                print(f"After each roll, type numbers {colorize('1-5', highlight_color)}, separated by spaces, corresponding to the dice you wish to KEEP.")
+                print(f"Ex: typing {colorize('\"1 3 5\"', highlight_color)} keeps dice #1, #3, and #5 and rerolls dice #2 and #4.\n")
+                print(f"Go to the {colorize('SETTINGS', highlight_color)} menu if you wish to instead select the dice to REROLL.")
             else:
-                print("After each roll, type numbers 1-5, separated by spaces, corresponding to the dice you wish to REROLL.")
-                print("Ex: typing \"1 3 5\" keeps dice #2 and #4 and rerolls dice #1, #3, and #5.\n")
-                print("Go to the SETTINGS menu if you wish to instead select the dice to KEEP.")
+                print(f"After each roll, type numbers {colorize('1-5', highlight_color)}, separated by spaces, corresponding to the dice you wish to REROLL.")
+                print(f"Ex: typing {colorize('\"1 3 5\"', highlight_color)} keeps dice #2 and #4 and rerolls dice #1, #3, and #5.\n")
+                print(f"Go to the {colorize('SETTINGS', highlight_color)} menu if you wish to instead select the dice to KEEP.")
             
             print("Dice are ordered from top to bottom (eg. the die at the top is #1 and the die at the bottom is #5).\n")
 
-            print("Type KEEP to retain all dice and immediately skip to score selection.")
+            print(f"Type {colorize('KEEP', highlight_color)} to retain all dice and immediately skip to score selection.")
             
-            print("\nRECORDING SCORE")
+            print("\n" + colorize("RECORDING SCORE", WHITE))
             print("After the final roll, choose a score category.\nFor this, you may either enter the number in [brackets] to the left of the category or type the category name itself.") 
 
-            print("\nNAVIGATING MENUS")
+            print("\n" + colorize("NAVIGATING MENUS", WHITE))
             print("All menus are case-insensitive. You do not need to type in all caps.\nUsually, you may type the menu name or its corresponding number.")
 
             input("\nPress ENTER to return: ")
@@ -717,7 +757,7 @@ if __name__ == "__main__":
         # TODO Elaborate on this a little bit.
         # Rules Explanation
         if menu == "RULES":
-            print("\nRULES")
+            print("\n" + "_"*50 + "\n" + colorize("RULES", WHITE))
             print("Each player gets 13 turns.")
             print("Each turn allows up to 3 total rolls.")
             print("Each score category can only be used once.")
@@ -725,16 +765,15 @@ if __name__ == "__main__":
             input("\nPress ENTER to return: ")
             menu = "MAIN"
 
-        # TODO Make a sub-menu that allows players to specifiy which category they want and provide them with examples
         if menu == "EXAMPLE SCORES":
-            print("\n" + "_"*50 + "\nEXAMPLE SCORES\n")
-            print("Please choose from the following:\n[1] Three of a Kind\n[2] Four of a Kind\n[3] Full House\n[4] Small Straight\n[5] Large Straight\n[6] Yahtzee\n[7] Chance\n[EXIT] Return to Main Menu\n")
+            print("\n" + "_"*50 + "\n" + colorize('EXAMPLE SCORES', WHITE) + "\n")
+            print(f"Please choose from the following:\n[{colorize('1', highlight_color)}] Three of a Kind\n[{colorize('2', highlight_color)}] Four of a Kind\n[{colorize('3', highlight_color)}] Full House\n[{colorize('4', highlight_color)}] Small Straight\n[{colorize('5', highlight_color)}] Large Straight\n[{colorize('6', highlight_color)}] Yahtzee\n[{colorize('7', highlight_color)}] Chance\n[{colorize('EXIT', highlight_color)}] Return to Main Menu\n")
             response = input()
             
             match response.strip().lower():
                 case "1" | "three of a kind" | "3 of a kind" | "three kind" | "3 kind":
                     print("_"*50)
-                    print("THREE OF A KIND\nYour hand qualifies as a Three of a Kind when at least three of your dice display the same number.\nFor valid hands, your Three of a Kind score is equal to the sum of all dice faces.\n\nEXAMPLES:")
+                    print(f"{colorize('THREE OF A KIND', WHITE)}\nYour hand qualifies as a Three of a Kind when at least three of your dice display the same number.\nFor valid hands, your Three of a Kind score is equal to the sum of all dice faces.\n\nEXAMPLES:")
                     printDie([4, 6, 3, 4, 4])
                     print("Score: 21 (4 + 6 + 3 + 4 + 4 = 21)\n")
                     printDie([3, 1, 1, 1, 5])
@@ -744,10 +783,9 @@ if __name__ == "__main__":
 
                     input("Press ENTER to continue.")
                 case "2" | "four of a kind" | "4 of a kind" | "four kind" | "4 kind":
-                    # TODO Unfinished, use the three of a kind example for inspiration.
                     print("_"*50)
-                    print("FOUR OF A KIND\nYour hand qualifies when at least four dice display the same number.")
-                    print("Your score is the sum of all dice faces.\n\nEXAMPLES:")
+                    print(f"{colorize('FOUR OF A KIND', WHITE)}\nYour hand qualifies when at least four dice display the same number.")
+                    print("For valid hands, your Four of a Kind score is equal to the sum of all dice faces.\n\nEXAMPLES:")
                     printDie([6, 6, 6, 6, 2])
                     print("Score: 26 (6 + 6 + 6 + 6 + 2 = 26)\n")
                     printDie([3, 3, 3, 3, 5])
@@ -757,72 +795,66 @@ if __name__ == "__main__":
                     input("Press ENTER to continue.")
                     
                 case "3" | "full house":
-                    # TODO Unfinished, use the three of a kind example for inspiration.
                     print("_"*50)
-                    print("FULL HOUSE\nYour hand qualifies when you have three of one number and two of another number.")
+                    print(f"{colorize('FULL HOUSE', WHITE)}\nYour hand qualifies when you have three of one number and two of another number.")
                     print("A Full House is worth 25 points.\n\nEXAMPLES:")
                     printDie([2, 2, 3, 3, 3])
                     print("Score: 25\n")
-                    printDie([5, 5, 5, 1, 1])
+                    printDie([5, 1, 5, 1, 1])
                     print("Score: 25\n")
-                    printDie([4, 4, 4, 4, 2])
+                    printDie([4, 4, 4, 4, 4])
                     print("Score: 0 (Doesn't qualify)\n")
                     input("Press ENTER to continue.")
                     
                 case "4" | "small straight" | "sm straight" | "sm. straight":
-                    # TODO Unfinished, use the three of a kind example for inspiration.
                     print("_"*50)
-                    print("SMALL STRAIGHT\nYour hand qualifies when you have four dice in a row.")
+                    print(f"{colorize('SMALL STRAIGHT', WHITE)}\nYour hand qualifies when you have four dice in a row.")
                     print("A Small Straight is worth 30 points.\n\nEXAMPLES:")
                     printDie([1, 2, 3, 4, 6])
                     print("Score: 30\n")
-                    printDie([2, 3, 4, 5, 5])
+                    printDie([5, 5, 4, 2, 3])
                     print("Score: 30\n")
                     printDie([1, 2, 4, 5, 6])
                     print("Score: 0 (Doesn't qualify)\n")
                     input("Press ENTER to continue.")
                     
                 case "5" | "large straight" | "lg straight" | "lg. straight":
-                    # TODO Unfinished, use the three of a kind example for inspiration.
                     print("_"*50)
                     print("LARGE STRAIGHT\nYour hand qualifies when all five dice are in a row.")
                     print("A Large Straight is worth 40 points.\n\nEXAMPLES:")
                     printDie([1, 2, 3, 4, 5])
                     print("Score: 40\n")
-                    printDie([2, 3, 4, 5, 6])
+                    printDie([6, 4, 3, 5, 2])
                     print("Score: 40\n")
                     printDie([1, 2, 3, 4, 6])
                     print("Score: 0 (Only a small straight)\n")
                     input("Press ENTER to continue.")
                     
                 case "6" | "yahtzee" | "five of a kind" | "five kind" | "5 of a kind" | "5 kind":
-                    # TODO Unfinished, use the three of a kind example for inspiration.
                     print("_"*50)
-                    print("YAHTZEE\nYour hand qualifies when all five dice display the same number.")
+                    print(f"{colorize('YAHTZEE', WHITE)}\nYour hand qualifies when all five dice display the same number.")
                     print("A Yahtzee is worth 50 points.\n\nEXAMPLES:")
                     printDie([6, 6, 6, 6, 6])
                     print("Score: 50\n")
                     printDie([1, 1, 1, 1, 1])
                     print("Score: 50\n")
-                    printDie([4, 4, 4, 4, 2])
+                    printDie([4, 1, 6, 6, 2])
                     print("Score: 0 (Doesn't qualify)\n")
                     input("Press ENTER to continue.")
                     
                 case "7" | "chance" | "sum" | "total":
-                    # TODO Unfinished, use the three of a kind example for inspiration.
                     print("_"*50)
-                    print("CHANCE\nChance has no special requirement.")
+                    print(f"{colorize('CHANCE', WHITE)}\nChance has no special requirement.")
                     print("Your score is simply the sum of all dice faces.\n\nEXAMPLES:")
                     printDie([1, 3, 4, 5, 6])
                     print("Score: 19 (1 + 3 + 4 + 5 + 6 = 19)\n")
-                    printDie([2, 2, 2, 5, 6])
-                    print("Score: 17 (2 + 2 + 2 + 5 + 6 = 17)\n")
+                    printDie([6, 4, 5, 5, 6])
+                    print("Score: 26 (6 + 4 + 5 + 5 + 6 = 26)\n")
                     input("Press ENTER to continue.")
                     
                 case "exit" | "8" | "leave" | "return":
                     menu = "MAIN"
                 case _:
-                    # TODO This is the catch-all case. Say something like "invalid input".
                     print(colorize("\nInvalid input. Please choose one of the listed options.\n", RED))
                     
 
@@ -868,7 +900,7 @@ if __name__ == "__main__":
                     
                     valid_input = True
                 except:
-                    print("Invalid input. Please enter \"KEEP\" or dice numbers between 1 and 5, separated by spaces.")
+                    print(colorize("Invalid input. Please enter \"KEEP\" or dice numbers between 1 and 5, separated by spaces.", RED))
             
             if end_rerolls:
                 break
@@ -888,11 +920,11 @@ if __name__ == "__main__":
                 result = player_scores[current_player].commands_dict[category](player_scores[current_player], round_scores)
 
                 if result == -1:
-                    print("You may only record a score for each category once. Please choose another category.\n")
+                    print(colorize("You may only record a score for each category once. Please choose another category.\n", RED))
                 else:
                     break
             else:
-                print("Please enter a valid score category.\n")
+                print(colorize("Please enter a valid score category.\n", RED))
 
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores, True)
         input()
