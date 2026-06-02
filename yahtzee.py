@@ -3,6 +3,7 @@ import random
 COLORS_ENABLED = True
 
 RESET = "\033[0m"
+RED = "\033[91m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
 CYAN = "\033[96m"
@@ -41,6 +42,19 @@ def formatScore(num, been_recorded = False):
         return str(num)
 
 def displayVictor(*scores):
+    max_score = max(scores)
+    winning_players = []
+
+    for i, score in enumerate(scores):
+        if score == max_score:
+            winning_players.append(i)
+    
+    if len(winning_players) > 1:
+        tied_players = [str(player + 1) for player in winning_players]
+        print(colorize(f"TIE BETWEEN PLAYERS {', '.join(tied_players)}!", YELLOW))
+    else:
+        print(colorize(f"PLAYER {winning_players[0] + 1} WINS!", GREEN))
+        
     """Finds and prints the winning player, or determines if there's a tie between two players.
     Args:
         scores: Can be either a list of players' scores or all of them in a tuple within the argument field.
@@ -895,17 +909,4 @@ if __name__ == "__main__":
         final_scores.append(player_scores[player].total)
     
     printFinalScores(player_scores, final_scores)
-
-def displayVictor(*scores):
-    max_score = max(scores)
-    winning_players = []
-
-    for i, score in enumerate(scores):
-        if score == max_score:
-            winning_players.append(i)
-    
-    if len(winning_players) > 0:
-        tied_players = [str(player + 1) for player in winning_players]
-        print(colorize(f"TIE BETWEEN PLAYERS {', '.join(tied_players)}!", YELLOW))
-    else:
-        print(colorize(f"PLAYER {winning_players[0] + 1} WINS!", GREEN))
+    displayVictor(*final_scores)
