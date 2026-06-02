@@ -215,7 +215,7 @@ def printFinalScores(player_scores, final_scores):
         player_scores (list): A list of ScoreCard objects representing each player's scorecard. Should be the same as the global variable of the same name.
         final_scores (list): A list of integers representing each player's final scores. Should be the same as the global variable of the same name.
     """
-    print(f"{'FINAL SCORES':^70}")
+    print(colorize(f"{'FINAL SCORES':^70}", CYAN))
     print("_"*70)
     print(f"|{'CATEGORY':^16}|{'PLAYER 1':^12}|{'PLAYER 2':^12}|{'PLAYER 3':^12}|{'PLAYER 4':^12}|")
     print("|" + "‾"*68 + "|")
@@ -815,7 +815,7 @@ if __name__ == "__main__":
                     menu = "MAIN"
                 case _:
                     # TODO This is the catch-all case. Say something like "invalid input".
-                    print("\nInvalid input. Please choose one of the listed options.\n")
+                    print(colorize("\nInvalid input. Please choose one of the listed options.\n", RED))
                     
 
 
@@ -904,7 +904,7 @@ def displayVictor(*scores):
         if score == max_score:
             winning_players.append(i)
     
-    if len(winning_players) > 1:
+    if len(winning_players) > 0:
         tied_players = [str(player + 1) for player in winning_players]
         print(colorize(f"TIE BETWEEN PLAYERS {', '.join(tied_players)}!", YELLOW))
     else:
