@@ -28,6 +28,80 @@ def rollDie(die, freeze):
         if not freeze[i]:
             die[i] = random.randint(1, 6)
 
+def rollDieEasy(die, freeze, scorecard):
+    """Randomizes the value of die as long as the corresponding freeze value is false. Increases the odds that the player will roll beneficial dice.
+
+    Args:
+        die (list): A list of 5 integer values representing dice faces.
+        freeze (list): A list of 5 boolean values representing whether or not the die in the corresponding index should be rerolled. True means it should, False means it shouldn't.
+        scorecard (object): The current player's scorecard object.
+    """
+
+    if True not in freeze:
+        for i in range(5):
+            die[i] = random.randint(1, 6)
+        return
+
+    kept_dice_permanent  = [x for x, keep in zip(die, freeze) if keep]
+    kept_dice_count = len(kept_dice_permanent)
+
+    copies = 0
+    for i in range(kept_dice_count):
+        kept_dice = kept_dice_permanent.copy()
+        kept_dice.pop(i)
+        
+        if kept_dice_permanent[i] in kept_dice:
+            copies += 1
+    
+    # Going for a yahtzee
+    if copies == kept_dice_count:
+        target_num = kept_dice_permanent[0]
+
+        for i in range(5):
+            if not freeze[i]:
+                if random.randint(1, 4) == 1:
+                    die[i] = target_num
+                else:
+                    die[i] = random.randint(1, 6)
+    
+    # Going for a straight
+    elif copies == 0:
+        if scorecard.sm_straight == "BLANK" or scorecard.lg_straight == "BLANK":
+            target_num = list(set([1, 2, 3, 4, 5, 6]) - set(kept_dice_permanent))
+
+            for i in range(5):
+                if not freeze[i]:
+                    if random.randint(1, 3) == 1:
+                        die[i] = target_num[random.randint(0, len(target_num)-1)]
+                    else:
+                        die[i] = random.randint(1, 6)
+        else:
+            for i in range(5):
+                if not freeze[i]:
+                    if random.randint(1, 3) == 1:
+                        die[i] = random.randint(4, 6)
+                    else:
+                        die[i] = random.randint(1, 6)
+
+    # Going for a full house
+    else:
+        if scorecard.full_house == "BLANK":
+            target_num = list(dict.fromkeys(kept_dice_permanent))
+
+            for i in range(5):
+                if not freeze[i]:
+                    if random.randint(1, 4) == 1:
+                        die[i] = target_num[random.randint(0, len(target_num)-1)]
+                    else:
+                        die[i] = random.randint(1, 6)
+        else:
+            for i in range(5):
+                if not freeze[i]:
+                    if random.randint(1, 3) == 1:
+                        die[i] = random.randint(4, 6)
+                    else:
+                        die[i] = random.randint(1, 6)
+
 def formatScore(num, been_recorded = False):
     """Formats the argument to contain leading zeroes if it's a 1 digit number, be two spaces ("  ") if it's "BLANK", and leave it unchanged otherwise.
     
@@ -45,19 +119,6 @@ def formatScore(num, been_recorded = False):
         return str(num)
 
 def displayVictor(*scores):
-    max_score = max(scores)
-    winning_players = []
-
-    for i, score in enumerate(scores):
-        if score == max_score:
-            winning_players.append(i)
-    
-    if len(winning_players) > 1:
-        tied_players = [str(player + 1) for player in winning_players]
-        print(colorize(f"TIE BETWEEN PLAYERS {', '.join(tied_players)}!", YELLOW))
-    else:
-        print(colorize(f"PLAYER {winning_players[0] + 1} WINS!", GREEN))
-        
     """Finds and prints the winning player, or determines if there's a tie between two players.
     Args:
         scores: Can be either a list of players' scores or all of them in a tuple within the argument field.
@@ -68,12 +129,12 @@ def displayVictor(*scores):
     for i, score in enumerate(scores):
         if score == max_score:
             winning_players.append(i)
-    
+
     if len(winning_players) > 1:
         tied_players = [str(player + 1) for player in winning_players]
-        print(f"TIE BETWEEN PLAYERS {', '.join(tied_players)}!")
+        print(colorize(f"TIE BETWEEN PLAYERS {', '.join(tied_players)}!", YELLOW))
     else:
-        print(f"PLAYER {winning_players[0]+1} WINS!")
+        print(colorize(f"PLAYER {winning_players[0] + 1} WINS!", GREEN))
 
 die_faces = [{
    0: "---------",
@@ -425,6 +486,9 @@ def calcHandScores(die):
 
 class ScoreCard:
     def __init__(self):    
+        # Easy Mode
+        self.easy_mode = False        # Default False
+
         # Top part of the score card
         self.aces = "BLANK"           # Score: Sum of all die displaying a 1 | Requirement: None
         self.twos = "BLANK"           # Score: Sum of all die displaying a 2 | Requirement: None
@@ -620,13 +684,6 @@ if __name__ == "__main__":
 
     n_players = int(response)
 
-    # POSSIBLE MENUS:
-    # MAIN              - Can choose any starting menu or begin the game.
-    # SETTINGS          - Can change settings.
-    # CONTROLS          - Basic explanation of the controls.
-    # RULES             - Basic explanation of the rules of yahtzee.
-    # EXAMPLE SCORES    - Basic explanation of the special dice hands.
-
     # Game state and settings
     in_menu = True    # False = Game Starts
     menu = "MAIN"     # Default
@@ -663,7 +720,8 @@ if __name__ == "__main__":
             print(f"[{colorize('2', highlight_color)}] Change whether you'd like to select dice to KEEP or REROLL. (Current: {"KEEP" if keep_dice else "REROLL"})")
             print(f"[{colorize('3', highlight_color)}] Toggle colors. (Current: {'ON' if colors_enabled else 'OFF'})")
             print(f"[{colorize('4', highlight_color)}] Change highlight color. (CURRENT: {highlight_color_name})")
-            print(f"[{colorize('5', highlight_color)}] Return to main menu.\n")
+            print(f"[{colorize('5', highlight_color)}] Go to easy mode submenu.")
+            print(f"[{colorize('6', highlight_color)}] Return to main menu.\n")
 
             response = input("ENTER YOUR CHOICE: ")
 
@@ -720,12 +778,37 @@ if __name__ == "__main__":
                                 break
                             case _:
                                 print(colorize("Please select a valid option from the list.", RED))
-                case "5" | "leave" | "return" | "exit" | "back":
+                case "5" | "easy" | "easy mode":
+                    menu = "EASY_MODE_SELECTION"
+                case "6" | "leave" | "return" | "exit" | "back":
                     menu = "MAIN"
                     continue
                 case _:
-                    print(colorize("\nInvalid option. Please choose 1-4.", RED))
+                    print(colorize("\nInvalid option. Please choose a valid option from the list.", RED))
                     continue
+        
+        # Easy Mode Toggle Submenu
+        if menu == "EASY_MODE_SELECTION":
+            print("\n" + "_"*50 + "\n" + colorize("EASY MODE", WHITE))
+            print(f"\n[{colorize('1', highlight_color)}] PLAYER 1 (CURRENT: {'EASY' if player_scores[0].easy_mode else 'NORMAL'})\n[{colorize('2', highlight_color)}] PLAYER 2 (CURRENT: {'EASY' if player_scores[1].easy_mode else 'NORMAL'})\n[{colorize('3', highlight_color)}] PLAYER 3 (CURRENT: {'EASY' if player_scores[2].easy_mode else 'NORMAL'})\n[{colorize('4', highlight_color)}] PLAYER 4 (CURRENT: {'EASY' if player_scores[3].easy_mode else 'NORMAL'})\n[{colorize('5', highlight_color)}] Return to settings menu.\n\n")
+
+            response = input("ENTER YOUR CHOICE: ")
+
+            match response.strip().lower():
+                case "1" | "player 1":
+                    player_scores[0].easy_mode = not player_scores[0].easy_mode
+                case "2" | "player 2":
+                    player_scores[1].easy_mode = not player_scores[1].easy_mode
+                case "3" | "player 3":
+                    player_scores[2].easy_mode = not player_scores[2].easy_mode
+                case "4" | "player 4":
+                    player_scores[3].easy_mode = not player_scores[3].easy_mode
+                case "5" | "leave" | "return" | "exit" | "back":
+                    menu = "SETTINGS"
+                case _:
+                    print(colorize("\nInvalid option. Please choose a valid option from the list.", RED))
+                    continue
+
 
 
         # Controls Explanation
@@ -767,7 +850,7 @@ if __name__ == "__main__":
 
         if menu == "EXAMPLE SCORES":
             print("\n" + "_"*50 + "\n" + colorize('EXAMPLE SCORES', WHITE) + "\n")
-            print(f"Please choose from the following:\n[{colorize('1', highlight_color)}] Three of a Kind\n[{colorize('2', highlight_color)}] Four of a Kind\n[{colorize('3', highlight_color)}] Full House\n[{colorize('4', highlight_color)}] Small Straight\n[{colorize('5', highlight_color)}] Large Straight\n[{colorize('6', highlight_color)}] Yahtzee\n[{colorize('7', highlight_color)}] Chance\n[{colorize('EXIT', highlight_color)}] Return to Main Menu\n")
+            print(f"Please choose from the following:\n[{colorize('1', highlight_color)}] Three of a Kind\n[{colorize('2', highlight_color)}] Four of a Kind\n[{colorize('3', highlight_color)}] Full House\n[{colorize('4', highlight_color)}] Small Straight\n[{colorize('5', highlight_color)}] Large Straight\n[{colorize('6', highlight_color)}] Yahtzee\n[{colorize('7', highlight_color)}] Chance\n[{colorize('8', highlight_color)}] Return to Main Menu\n")
             response = input()
             
             match response.strip().lower():
@@ -856,8 +939,6 @@ if __name__ == "__main__":
                     menu = "MAIN"
                 case _:
                     print(colorize("\nInvalid input. Please choose one of the listed options.\n", RED))
-                    
-
 
     # Main game. Each player gets 13 turns.
     for turn in range(n_players*13):
@@ -867,7 +948,10 @@ if __name__ == "__main__":
 
         print("_"*57, end="\n\n")
 
-        rollDie(die_values, freeze_values)
+        if player_scores[current_player].easy_mode:
+            rollDieEasy(die_values, freeze_values, player_scores[current_player])
+        else:
+            rollDie(die_values, freeze_values)
         
         end_rerolls = False
         for i in range(2):
@@ -905,7 +989,10 @@ if __name__ == "__main__":
             if end_rerolls:
                 break
             
-            rollDie(die_values, freeze_values)
+            if player_scores[current_player].easy_mode:
+                rollDieEasy(die_values, freeze_values, player_scores[current_player])
+            else:
+                rollDie(die_values, freeze_values)
             
 
         round_scores = calcHandScores(die_values)
@@ -929,7 +1016,7 @@ if __name__ == "__main__":
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores, True)
         input()
     
-    # Show a tabulation of the final scores and state the winner.
+    # Main game finished. Display tabulation of final scores and state the winner.
     final_scores = []
     for player in range(n_players):
         player_scores[player].calcTotal()
