@@ -675,7 +675,7 @@ if __name__ == "__main__":
     highlight_color_name = "CYAN"
 
     # Getting the number of players
-    print(f"\nWelcome to a legally-distinct Yahtzee Python program!\nPlease enter the number of players ({colorize('1-4', highlight_color)}).\n")
+    print(f"\nWelcome to Python command-line Yahtzee!\nMade by Gabriel Kok, Charles Wu, and Annora Zhou.\n\nPlease enter the number of players ({colorize('1-4', highlight_color)}).\n")
     response = input()
 
     while not response.isdigit() or not 1 <= int(response) <= 4:
@@ -690,7 +690,6 @@ if __name__ == "__main__":
     keep_dice = True  # As opposed to the player selecting the dice they wish to REROLL
 
     # Main Menu
-    # TODO Start filling out more colors. Currently I'm using WHTIE as a substitute for bold.
     while in_menu:
         # Select which menu you want or start the game
         if menu == "MAIN":
@@ -699,16 +698,16 @@ if __name__ == "__main__":
             response = input("\nENTER YOUR CHOICE: ")
 
             match response.strip().lower():
-                case "settings" | "setting":
-                    menu = "SETTINGS"
-                case "help" | "controls":
-                    menu = "CONTROLS"
-                case "rules" | "rule":
-                    menu = "RULES"
-                case "score" | "scores":
-                    menu = "EXAMPLE SCORES"
-                case "start" | "begin":
+                case "1" | "start" | "begin":
                     in_menu = False
+                case "2" | "settings" | "setting":
+                    menu = "SETTINGS"
+                case "3" | "rules" | "rule":
+                    menu = "RULES"
+                case "4" | "score" | "scores":
+                    menu = "EXAMPLE SCORES"
+                case "5" | "help" | "controls":
+                    menu = "CONTROLS"
                 case _:
                     print(colorize("\nNot a valid menu option. Please type \"START\", \"HELP\", \"RULES\", \"SCORE\", or \"SETTINGS\".", RED))
         
@@ -809,8 +808,6 @@ if __name__ == "__main__":
                     print(colorize("\nInvalid option. Please choose a valid option from the list.", RED))
                     continue
 
-
-
         # Controls Explanation
         if menu == "CONTROLS":
             print("\n" + "_"*50 + "\n" + colorize("REROLLS", WHITE))
@@ -837,17 +834,26 @@ if __name__ == "__main__":
             input("\nPress ENTER to return: ")
             menu = "MAIN"
 
-        # TODO Elaborate on this a little bit.
         # Rules Explanation
         if menu == "RULES":
             print("\n" + "_"*50 + "\n" + colorize("RULES", WHITE))
-            print("Each player gets 13 turns.")
-            print("Each turn allows up to 3 total rolls.")
-            print("Each score category can only be used once.")
-            print("The player with the highest final score wins.")
+            print("\nBASICS")
+            print("Each player has 13 categories on their score card and gets 13 turns to fill each category out.")
+            print("By the end of the 13 turns, each score category must have been used exactly once.")
+            print("Once you record a score to a specific category, you may not use that category again.")
+
+            print("\nDURING YOUR TURN")
+            print("Each turn begins with all 5 dice being rolled.")
+            print(f"After this happens, you may choose which dice you wish to {'keep' if keep_dice else 'reroll'} by entering numbers in the command line.")
+            print("You may opt to reroll select dice up to 2 times per turn.")
+            print("At the end of your turn, you must choose a score category to which to assign your current hand of dice.")
+            print(f"Explanations of how scores in each category are calculated can be found in the {colorize('SCORE', highlight_color)} menu.")
+
+            print("\nThe player with the highest final score wins.")
             input("\nPress ENTER to return: ")
             menu = "MAIN"
 
+        # Demonstration of Example Hands
         if menu == "EXAMPLE SCORES":
             print("\n" + "_"*50 + "\n" + colorize('EXAMPLE SCORES', WHITE) + "\n")
             print(f"Please choose from the following:\n[{colorize('1', highlight_color)}] Three of a Kind\n[{colorize('2', highlight_color)}] Four of a Kind\n[{colorize('3', highlight_color)}] Full House\n[{colorize('4', highlight_color)}] Small Straight\n[{colorize('5', highlight_color)}] Large Straight\n[{colorize('6', highlight_color)}] Yahtzee\n[{colorize('7', highlight_color)}] Chance\n[{colorize('8', highlight_color)}] Return to Main Menu\n")
@@ -961,7 +967,7 @@ if __name__ == "__main__":
             valid_input = False
             while not valid_input:
                 try:
-                    response = input()
+                    response = input("Enter your selection: ")
                     if response.strip().upper() == "KEEP":
                         valid_input = True
                         end_rerolls = True
@@ -984,7 +990,7 @@ if __name__ == "__main__":
                     
                     valid_input = True
                 except:
-                    print(colorize("Invalid input. Please enter \"KEEP\" or dice numbers between 1 and 5, separated by spaces.", RED))
+                    print(colorize("Invalid input. Please enter \"KEEP\" or dice numbers between 1 and 5, separated by spaces.\n", RED))
             
             if end_rerolls:
                 break
@@ -993,7 +999,6 @@ if __name__ == "__main__":
                 rollDieEasy(die_values, freeze_values, player_scores[current_player])
             else:
                 rollDie(die_values, freeze_values)
-            
 
         round_scores = calcHandScores(die_values)
         player_scores[current_player].recordYahtzeeBonus(round_scores)
