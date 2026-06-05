@@ -703,7 +703,11 @@ if __name__ == "__main__":
         # Select which menu you want or start the game
         if menu == "MAIN":
             print("\n"+"_"*50)
-            print(f"{colorize('MAIN MENU', WHITE)}\n\nType {colorize('START', highlight_color)} to begin the game.\nType {colorize('SETTINGS', highlight_color)} to view and change current settings.\nType {colorize('RULES', highlight_color)} to learn how Yahtzee works.\nType {colorize('SCORE', highlight_color)} to see scoring examples.\nType {colorize('HELP', highlight_color)} to learn the controls.")
+            print(f"{colorize('MAIN MENU', WHITE)}\n\nType {colorize('START', highlight_color)} to begin the game.")
+            print(f"Type {colorize('SETTINGS', highlight_color)} to view and change current settings.")
+            print(f"Type {colorize('RULES', highlight_color)} to learn how Yahtzee works.")
+            print(f"Type {colorize('SCORE', highlight_color)} to see scoring examples.")
+            print(f"Type {colorize('HELP', highlight_color)} to learn the controls.")
             response = input("\nENTER YOUR CHOICE: ")
 
             match response.strip().lower():
@@ -798,7 +802,11 @@ if __name__ == "__main__":
         # Easy Mode Toggle Submenu
         if menu == "EASY_MODE_SELECTION":
             print("\n" + "_"*50 + "\n" + colorize("EASY MODE", WHITE))
-            print(f"\n[{colorize('1', highlight_color)}] PLAYER 1 (CURRENT: {'EASY' if player_scores[0].easy_mode else 'NORMAL'})\n[{colorize('2', highlight_color)}] PLAYER 2 (CURRENT: {'EASY' if player_scores[1].easy_mode else 'NORMAL'})\n[{colorize('3', highlight_color)}] PLAYER 3 (CURRENT: {'EASY' if player_scores[2].easy_mode else 'NORMAL'})\n[{colorize('4', highlight_color)}] PLAYER 4 (CURRENT: {'EASY' if player_scores[3].easy_mode else 'NORMAL'})\n[{colorize('5', highlight_color)}] Return to settings menu.\n\n")
+            print(f"\n[{colorize('1', highlight_color)}] PLAYER 1 (CURRENT: {'EASY' if player_scores[0].easy_mode else 'NORMAL'})")
+            print(f"[{colorize('2', highlight_color)}] PLAYER 2 (CURRENT: {'EASY' if player_scores[1].easy_mode else 'NORMAL'})")
+            print(f"[{colorize('3', highlight_color)}] PLAYER 3 (CURRENT: {'EASY' if player_scores[2].easy_mode else 'NORMAL'})")
+            print(f"[{colorize('4', highlight_color)}] PLAYER 4 (CURRENT: {'EASY' if player_scores[3].easy_mode else 'NORMAL'})")
+            print(f"[{colorize('5', highlight_color)}] Return to settings menu.\n")
 
             response = input("ENTER YOUR CHOICE: ")
 
@@ -865,13 +873,23 @@ if __name__ == "__main__":
         # Demonstration of Example Hands
         if menu == "EXAMPLE SCORES":
             print("\n" + "_"*50 + "\n" + colorize('EXAMPLE SCORES', WHITE) + "\n")
-            print(f"Please choose from the following:\n[{colorize('1', highlight_color)}] Three of a Kind\n[{colorize('2', highlight_color)}] Four of a Kind\n[{colorize('3', highlight_color)}] Full House\n[{colorize('4', highlight_color)}] Small Straight\n[{colorize('5', highlight_color)}] Large Straight\n[{colorize('6', highlight_color)}] Yahtzee\n[{colorize('7', highlight_color)}] Chance\n[{colorize('8', highlight_color)}] Return to Main Menu\n")
+            print(f"Please choose from the following:")
+            print(f"[{colorize('1', highlight_color)}] Three of a Kind")
+            print(f"[{colorize('2', highlight_color)}] Four of a Kind")
+            print(f"[{colorize('3', highlight_color)}] Full House")
+            print(f"[{colorize('4', highlight_color)}] Small Straight")
+            print(f"[{colorize('5', highlight_color)}] Large Straight")
+            print(f"[{colorize('6', highlight_color)}] Yahtzee")
+            print(f"[{colorize('7', highlight_color)}] Chance")
+            print(f"[{colorize('8', highlight_color)}] Return to Main Menu")
             response = input()
             
             match response.strip().lower():
                 case "1" | "three of a kind" | "3 of a kind" | "three kind" | "3 kind":
                     print("_"*50)
-                    print(f"{colorize('THREE OF A KIND', WHITE)}\nYour hand qualifies as a Three of a Kind when at least three of your dice display the same number.\nFor valid hands, your Three of a Kind score is equal to the sum of all dice faces.\n\nEXAMPLES:")
+                    print(f"{colorize('THREE OF A KIND', WHITE)}")
+                    print("Your hand qualifies as a Three of a Kind when at least three of your dice display the same number.")
+                    print("For valid hands, your Three of a Kind score is equal to the sum of all dice faces.\n\nEXAMPLES:")
                     printDie([4, 6, 3, 4, 4])
                     print("Score: 21 (4 + 6 + 3 + 4 + 4 = 21)\n")
                     printDie([3, 1, 1, 1, 5])
