@@ -1,0 +1,66 @@
+__________
+YAHZTEE.PY
+‾‾‾‾‾‾‾‾‾‾
+Our Python program for this project is called yahtzee.py. It can be run from the command line of any computer with the latest version of Python installed.
+
+______________________
+HOW TO USE OUR PROGRAM
+‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+The use of our program is done entirely within the command line terminal. The program will print instructions to the user whenever necessary.
+In general, interfacing with the program involves entering numbers or words into the command line to make selections in the menus, choose which dice you wish to reroll in the game, and choose which score category you'd like to use at the end of your turn.
+
+________________________
+WHAT WENT INTO MAKING IT
+‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+Programming the game itself mostly involved mapping the rules of Yahtzee onto computer instructions. The most time-consuming part of programming the game interface was designing a single game display that effectively communicates all important information in a way that's formatted correctly given all possible situations in the game. Although this wasn't particularly challenging on a conceptual level, it did take multiple hours of trial and error to draft in a text file and then properly implement in print() statements.
+
+_________________
+KNOWN LIMITATIONS
+‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+The game can only be played by four players, and the instructions are not always entirely intuitive. The testing we've done on the game with people unfamiliar with the program has always involved extensive time spent explaining the controls and rules.
+
+Additionally, since there are no animations, it's difficult to tell if a die was rolled and landed on the same number or if it wasn't rolled at all. Given more time, it would be interesting to experiment with text deletion to see if making a die-rolling animation could be possible.
+
+_____________
+SOMETHING NEW
+‾‾‾‾‾‾‾‾‾‾‾‾‾
+Library or technique not learned in class: Python class functionality.
+
+For Yahtzee to work in Python, a lot of information about the state of each player's game must be stored and accessed regularly. To help facilitate this, we created a class named ScoreCard that holds each player's score in every category in the game, as well as functions to update that player's score. This class also has a dictionary that maps specific strings with score update functions, so that a user's input in the command line while running the function can be passed directly into the program for the right function to run. If the user doesn't enter a string held within the dictionary, the resulting error is caught and the user is re-prompted.
+
+_____________
+CONTRIBUTIONS
+‾‾‾‾‾‾‾‾‾‾‾‾‾
+Name: Gabriel Kok
+Username: Bluforest
+
+Being the only one in the group already familiar with the game Yahtzee, Gabriel made the main game program.
+
+Name: Charles Wu
+Username: charlesthegoat88
+
+Charles worked on the main menu and added exception handling to all of the user input sequences so the program doesn't break if the user enters the wrong thing.
+
+Name: Annora Zhou
+Username: ajzhou-rgb
+
+Annora added colors to the main menu to better demarcate error messages and user instructions. She also added examples to the example score submenu in the main menu.
+
+More detailed contributions can be found at https://github.com/Bluforest/Yahtzee.
+_______________________
+AI DISCLOSURE STATEMENT
+‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+I did not use any AI tools to write any code.
+I did, however, use AI to help when I felt like there might be a simpler solution than the one I came up with myself.
+
+From using this, I learned that Python 3.10 and afterwards includes match-case statements which are more elegant versions of if-elif-else statements but with more limited functionality.
+I also used AI to help me implement the ScoreCard class in the program, namely by fixing some issues involved in using a dictionary to match user input to functions in the class.
+
+_________________
+APPENDIX — RUBRIC
+‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+Strategy and Code
+While it's likely that there are a number of optimizations that could be done on the code, the game is fully playable in the program's current state.
+
+Mastery of Data Types 
+We used integers, strings, Booleans, and lists where applicable. For example, Booleans are used to store certain game settings, a list is used to store dice values at any given point in time, integers represent a player's score, and string comparison is used in the main menu to allow the user to navigate between menus.
