@@ -12,6 +12,14 @@ CYAN = "\033[96m"
 WHITE = "\033[97m"
 
 def colorize(text, color):
+    """Adds ANSI escape sequences to change the text color of a string.
+    
+    Args:
+        text (string): The string whose color needs to be changed.
+        color (string): A string corresponding to an ANSI escape sequence for the desired color.
+            May use global variables RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, and WHITE, all defined earlier.
+    """
+    
     if colors_enabled:
         return color + text + RESET
     return text
@@ -109,12 +117,13 @@ def formatScore(num, been_recorded = False):
         num (string): The number to be formatted.
     Returns:
         num (string): The formatted number with a leading zero if necessary or two spaces if blank.
-        been_recorded (boolean): True if the given score category has been recorded, false otherwise."""
+        been_recorded (boolean): True if the given score category has been recorded, false otherwise.
+    """
     
     if been_recorded or num == "BLANK" or num == "" or num == -1:
         return "  "
     elif int(num) // 10 == 0:
-        return f"{int(num):02d}"
+        return " "+str(num)
     else:
         return str(num)
 
@@ -1021,7 +1030,7 @@ if __name__ == "__main__":
         printGameDisplay(current_player, (turn // n_players) + 1, 0, die_values, player_scores[current_player], round_scores, True)
         input()
     
-    # Main game finished. Display tabulation of final scores and state the winner.
+    # Runs after the game is finished. Display tabulation of final scores and state the winner.
     final_scores = []
     for player in range(n_players):
         player_scores[player].calcTotal()
